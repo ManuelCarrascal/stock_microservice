@@ -1,0 +1,23 @@
+{
+  "properties": [
+    {
+      "name": "category.description.required-message",
+      "type": "java.lang.String",
+      "description": "Description for category.description.required-message."
+    },
+    {
+      "name": "category.name.required-message",
+      "type": "java.lang.String",
+      "description": "Description for category.name.required-message."
+    },
+    {
+      "name": "category.name.length-message",
+      "type": "java.lang.String",
+      "description": "Description for category.name.length-message."
+    },
+    {
+      "name": "category.description.length-message",
+      "type": "java.lang.String",
+      "description": "Description for category.description.length-message."
+    }
+  ] }

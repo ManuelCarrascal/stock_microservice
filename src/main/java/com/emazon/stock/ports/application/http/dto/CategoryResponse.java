@@ -1,12 +1,11 @@
 package com.emazon.stock.ports.application.http.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryResponse implements Serializable {
