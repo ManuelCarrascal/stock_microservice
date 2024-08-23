@@ -4,4 +4,6 @@ import com.emazon.stock.domain.model.Category;
 
 public interface ICategoryPersistencePort {
     void saveCategory(Category category);
+    boolean categoryExistsByName(String categoryName);
+
 }
