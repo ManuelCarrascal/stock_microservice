@@ -8,4 +8,5 @@ public interface ICategoryPersistencePort {
     void saveCategory(Category category);
     boolean categoryExistsByName(String categoryName);
     Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil);
+
 }

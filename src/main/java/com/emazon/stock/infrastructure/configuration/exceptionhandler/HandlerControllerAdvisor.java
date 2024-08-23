@@ -22,11 +22,15 @@ public class HandlerControllerAdvisor {
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", errors));
-
     }
 
     @ExceptionHandler(InvalidPageIndexException.class)
     public ResponseEntity<String> handleInvalidPageIndexException(InvalidPageIndexException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

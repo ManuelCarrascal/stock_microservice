@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import com.emazon.stock.domain.spi.category.ICategoryPersistencePort;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
-
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -47,6 +46,7 @@ class CategoryUseCaseTest {
         //(categoryPersistencePort.categoryExistsByName(category.getCategoryName())) : false
 
         //Arrange Statement
+
         doReturn(false).when(categoryPersistencePortMock).categoryExistsByName("Electronics");
         Category category = new Category();
         category.setCategoryName("Electronics");
@@ -81,3 +81,4 @@ class CategoryUseCaseTest {
         });
     }
 }
+

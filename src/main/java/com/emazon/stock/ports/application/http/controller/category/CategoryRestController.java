@@ -31,6 +31,7 @@ public class CategoryRestController {
     private final ICategoryServicePort categoryServicePort;
     private final ICategoryRequestMapper categoryRequestMapper;
     private final ICategoryResponseMapper categoryResponseMapper;
+  
     @Operation(summary = "Save a new category", description = "Creates a new category in the database")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Category created successfully"),

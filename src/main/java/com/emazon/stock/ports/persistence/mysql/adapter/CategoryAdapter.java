@@ -44,6 +44,4 @@ public class CategoryAdapter implements ICategoryPersistencePort {
                 categories
         );
     }
-
-
 }

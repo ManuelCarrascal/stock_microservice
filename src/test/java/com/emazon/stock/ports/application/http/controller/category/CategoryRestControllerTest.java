@@ -50,6 +50,7 @@ class CategoryRestControllerTest {
     @MockBean(name = "categoryResponseMapper")
     private ICategoryResponseMapper categoryResponseMapperMock;
 
+
     @MockBean(name = "categoryServicePort")
     private ICategoryServicePort categoryServicePortMock;
 

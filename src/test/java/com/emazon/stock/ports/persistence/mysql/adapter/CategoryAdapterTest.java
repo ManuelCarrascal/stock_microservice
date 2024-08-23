@@ -2,6 +2,7 @@ package com.emazon.stock.ports.persistence.mysql.adapter;
 
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.util.PaginationUtil;
+
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Test;
 import com.emazon.stock.domain.model.Category;
@@ -59,7 +60,6 @@ class CategoryAdapterTest {
                 () -> verify(categoryRepositoryMock).save(categoryEntityMockTest)
         );
     }
-
 
     @Test()
     void categoryExistsByNameWhenCategoryRepositoryFindByCategoryNameCategoryNameIsPresent() {
@@ -185,3 +185,4 @@ class CategoryAdapterTest {
         }
     }
 }
+
