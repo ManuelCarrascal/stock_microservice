@@ -9,6 +9,5 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ICategoryResponseMapper {
     CategoryResponse categoryToCategoryResponse(Category category);
-
     List<CategoryResponse> categoriesToCategoryResponses(List<Category> categories);
 }

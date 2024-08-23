@@ -1,12 +1,11 @@
 package com.emazon.stock.domain.api.usecase;
 
 import com.emazon.stock.domain.api.ICategoryServicePort;
+import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.spi.category.ICategoryPersistencePort;
-
-import java.util.List;
-
+import com.emazon.stock.domain.util.PaginationUtil;
 
 public class CategoryUseCase implements ICategoryServicePort {
 
@@ -18,16 +17,14 @@ public class CategoryUseCase implements ICategoryServicePort {
 
     @Override
     public void saveCategory(Category category) {
+        if (categoryPersistencePort.categoryExistsByName(category.getCategoryName())) {
+            throw new EntityAlreadyExistsException("Category");
+        }
         categoryPersistencePort.saveCategory(category);
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryPersistencePort.getAllCategories();
+    public Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil) {
+        return categoryPersistencePort.getAllCategoriesPaginated(paginationUtil);
     }
-
-    public Pagination<Category> getAllCategoriesPaginated(int page, int size, String sortDirection) {
-        return categoryPersistencePort.getAllCategoriesPaginated(page, size, sortDirection);
-    }
-
 }
