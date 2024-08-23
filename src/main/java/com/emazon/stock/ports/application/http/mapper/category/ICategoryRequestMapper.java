@@ -5,6 +5,6 @@ import com.emazon.stock.ports.application.http.dto.CategoryRequest;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface CategoryRequestMapper {
+public interface ICategoryRequestMapper {
     Category categoryRequestToCategory(CategoryRequest categoryRequest);
 }

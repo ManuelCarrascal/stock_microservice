@@ -1,19 +1,20 @@
 package com.emazon.stock.domain.api.usecase;
 
+import com.emazon.stock.domain.model.Pagination;
+import com.emazon.stock.domain.util.PaginationUtil;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Test;
 import com.emazon.stock.domain.spi.category.ICategoryPersistencePort;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doReturn;
-import static org.hamcrest.Matchers.is;
 
 @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
 class CategoryUseCaseTest {
@@ -44,20 +45,40 @@ class CategoryUseCaseTest {
 
         //(categoryPersistencePort.categoryExistsByName(category.getCategoryName())) : false
 
-         //Arrange Statement
+        //Arrange Statement
+
         doReturn(false).when(categoryPersistencePortMock).categoryExistsByName("Electronics");
         Category category = new Category();
         category.setCategoryName("Electronics");
         doNothing().when(categoryPersistencePortMock).saveCategory(category);
         CategoryUseCase target = new CategoryUseCase(categoryPersistencePortMock);
-        
+
         //Act Statement
         target.saveCategory(category);
-        
+
         //Assert statement
         assertAll("result", () -> {
             verify(categoryPersistencePortMock).categoryExistsByName("Electronics");
             verify(categoryPersistencePortMock).saveCategory(category);
         });
     }
+
+    @Test()
+    void getAllCategoriesPaginatedTest() {
+        //Arrange Statement
+        Pagination<Category> paginationMock = mock(Pagination.class);
+        PaginationUtil paginationUtilMock = mock(PaginationUtil.class);
+        doReturn(paginationMock).when(categoryPersistencePortMock).getAllCategoriesPaginated(paginationUtilMock);
+        CategoryUseCase target = new CategoryUseCase(categoryPersistencePortMock);
+
+        //Act Statement
+        Pagination<Category> result = target.getAllCategoriesPaginated(paginationUtilMock);
+
+        //Assert statement
+        assertAll("result", () -> {
+            assertThat(result, equalTo(paginationMock));
+            verify(categoryPersistencePortMock).getAllCategoriesPaginated(paginationUtilMock);
+        });
+    }
 }
+
