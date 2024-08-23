@@ -1,62 +1,85 @@
 package com.emazon.stock.ports.persistence.mysql.adapter;
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.Test;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.ports.persistence.mysql.entity.CategoryEntity;
-import com.emazon.stock.ports.persistence.mysql.mapper.CategoryEntityMapper;
 import com.emazon.stock.ports.persistence.mysql.repository.ICategoryRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import java.util.Optional;
-import java.util.logging.Logger;
+import com.emazon.stock.ports.persistence.mysql.mapper.CategoryEntityMapper;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doReturn;
 
- class CategoryAdapterTest {
+@Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
+class CategoryAdapterTest {
 
-    private static final Logger logger = Logger.getLogger(CategoryAdapterTest.class.getName());
+    private final CategoryEntityMapper categoryEntityMapperMock = mock(CategoryEntityMapper.class, "categoryEntityMapper");
 
-    @Mock
-    private ICategoryRepository categoryRepository;
+    private final ICategoryRepository categoryRepositoryMock = mock(ICategoryRepository.class, "categoryRepository");
 
-    @Mock
-    private CategoryEntityMapper categoryEntityMapper;
-
-    @InjectMocks
-    private CategoryAdapter categoryAdapter;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+    private final CategoryEntity categoryEntityMock = mock(CategoryEntity.class);
 
     @Test
-     void testSaveCategory_Success() {
-        Category category = new Category();
-        category.setCategoryName("Electronics");
+    void saveCategoryTest() {
+        // Arrange
+        Category categoryMock = mock(Category.class);
+        CategoryEntity categoryEntityMockTest = mock(CategoryEntity.class);
 
-        when(categoryRepository.findByCategoryName("Electronics")).thenReturn(Optional.empty());
-        when(categoryEntityMapper.toEntity(category)).thenReturn(new CategoryEntity());
+        doReturn(categoryEntityMockTest).when(categoryEntityMapperMock).toEntity(categoryMock);
+        doReturn(categoryEntityMockTest).when(categoryRepositoryMock).save(categoryEntityMockTest);
 
-        categoryAdapter.saveCategory(category);
-        logger.info("Category saved successfully");
+        CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
 
-        verify(categoryRepository, times(1)).save(any(CategoryEntity.class));
+        // Act
+        target.saveCategory(categoryMock);
+
+        // Assert
+        assertAll("result",
+                () -> verify(categoryEntityMapperMock).toEntity(categoryMock),
+                () -> verify(categoryRepositoryMock).save(categoryEntityMockTest)
+        );
     }
 
-     @Test
-     void testSaveCategory_EntityAlreadyExists() {
-         Category category = new Category();
-         category.setCategoryName("Electronics");
 
-         when(categoryRepository.findByCategoryName("Electronics")).thenReturn(Optional.of(new CategoryEntity()));
+    @Test()
+    void categoryExistsByNameWhenCategoryRepositoryFindByCategoryNameCategoryNameIsPresent() {
 
-         EntityAlreadyExistsException exception = assertThrows(EntityAlreadyExistsException.class, () -> {
-             categoryAdapter.saveCategory(category);
-         });
-         logger.info(exception.getMessage());
-     }
+         // (categoryRepository.findByCategoryName(categoryName).isPresent()) : true
+
+         //Arrange Statement
+        doReturn(Optional.of(categoryEntityMock)).when(categoryRepositoryMock).findByCategoryName("Electronics");
+        CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
+        
+        //Act Statement
+        boolean result = target.categoryExistsByName("Electronics");
+        
+        //Assert statement
+        assertAll("result", () -> {
+            assertThat(result, equalTo(Boolean.TRUE));
+            verify(categoryRepositoryMock).findByCategoryName("Electronics");
+        });
+    }
+
+    @Test()
+    void categoryExistsByNameWhenCategoryRepositoryFindByCategoryNameCategoryNameNotIsPresent() {
+
+         //(categoryRepository.findByCategoryName(categoryName).isPresent()) : false
+
+         //Arrange Statement
+        doReturn(Optional.empty()).when(categoryRepositoryMock).findByCategoryName("Electronics");
+        CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
+        
+        //Act Statement
+        boolean result = target.categoryExistsByName("Electronics");
+        
+        //Assert statement
+        assertAll("result", () -> {
+            assertThat(result, equalTo(Boolean.FALSE));
+            verify(categoryRepositoryMock).findByCategoryName("Electronics");
+        });
+    }
 }

@@ -20,9 +20,12 @@ public class HandlerControllerAdvisor {
         String errors = ex.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
-
-
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", errors));
 
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
