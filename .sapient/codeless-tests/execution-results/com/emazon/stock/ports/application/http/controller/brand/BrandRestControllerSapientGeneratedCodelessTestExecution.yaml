@@ -1,0 +1,12 @@
+---
+fullClassName: "com.emazon.stock.ports.application.http.controller.brand.BrandRestControllerSapientGeneratedCodelessTest"
+testMethodExecutions:
+- targetMethod: "ResponseEntity<Void> saveBrand(@Valid @RequestBody BrandRequest brandRequest)"
+  tests:
+  - testName: "saveBrandTest"
+    testExecutionStatus: "FAILED"
+    resultValue: "NEW ResponseEntity<Void>()"
+    pathFailureReasons:
+    - "java.lang.AssertionError: Response status expected:<201> but was:<400>"
+    timestamp: 1724540068161
+    failureLineNumber: 80
