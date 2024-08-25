@@ -1,0 +1,52 @@
+---
+class: "com.emazon.stock.domain.api.usecase.BrandUseCase"
+fields:
+- "IBrandPersistencePort brandPersistencePort"
+imports:
+- "com.emazon.stock.domain.spi.brand.IBrandPersistencePort"
+- "com.emazon.stock.domain.model.Brand"
+- "void"
+- "java.lang.String"
+- "com.emazon.stock.domain.exception.EntityAlreadyExistsException"
+methods:
+- targetMethod: "saveBrand(Brand brand): void result"
+  tests:
+  - name: "saveBrandWhenBrandPersistencePortBrandExistsByNameBrandGetBrandNameThrowsEntityAlreadyExistsException"
+    target: "NEW BrandUseCase(IBrandPersistencePort brandPersistencePort)"
+    variables:
+    - brandName: "brandName1"
+    - brand: "NEW Brand()"
+      fields:
+      - "String brandName = REF brandName"
+    - brandPersistencePort: "MOCK"
+      mock-expressions:
+      - "brandExistsByName(String brandName): boolean boolean1"
+    - boolean1: true
+    - uniqueUuid1: "Brand"
+    - entityAlreadyExistsException: "THROW NEW EntityAlreadyExistsException(String\
+        \ uniqueUuid1)"
+    - result: "REF entityAlreadyExistsException"
+    branches:
+    - expression: "brandPersistencePort.brandExistsByName(brand.getBrandName()) :\
+        \ true"
+      lineNumber: 17
+  - name: "saveBrandWhenBrandPersistencePortNotBrandExistsByNameBrandGetBrandName"
+    target: "NEW BrandUseCase(IBrandPersistencePort brandPersistencePort)"
+    variables:
+    - brandName: "brandName1"
+    - brand: "NEW Brand()"
+      fields:
+      - "String brandName = REF brandName"
+    - brandPersistencePort: "MOCK"
+      mock-expressions:
+      - "brandExistsByName(String brandName): boolean boolean1"
+      - "saveBrand(Brand brand): void void"
+    - boolean1: false
+    - void: "VOID"
+    - expectedResult: "VOID"
+    - result: "REF expectedResult"
+    branches:
+    - expression: "brandPersistencePort.brandExistsByName(brand.getBrandName()) :\
+        \ false"
+      lineNumber: 17
+  sourceCodeSignature: "void saveBrand(Brand brand)"
