@@ -1,0 +1,133 @@
+---
+targetClass:
+  fullClassName: "com.emazon.stock.ports.application.http.controller.brand.BrandRestController"
+methods:
+- method:
+    name: "saveBrand"
+    sourceCodeSignature: "ResponseEntity<Void> saveBrand(@Valid @RequestBody BrandRequest\
+      \ brandRequest)"
+    returnType: "org.springframework.http.ResponseEntity"
+    genericReturnType: "java.lang.Void"
+    parameters:
+    - name: "brandRequest"
+      type: "com.emazon.stock.ports.application.http.dto.brand.BrandRequest"
+    instructionFingerprint: "4A767434E9610E1AF955DB071FFB9676"
+  paths:
+  - testPathName: "saveBrandTest"
+    constructorSignature: "<init>(com.emazon.stock.domain.api.IBrandServicePort,com.emazon.stock.ports.application.http.mapper.brand.IBrandRequestMapper)\
+      \ : void"
+    problemWasSolvedByProver: false
+    inputParameters:
+    - type: "CONSTRUCTOR"
+      name: "constructor"
+      valueUuid: "target"
+    - type: "INPUT"
+      name: "brandRequest"
+      valueUuid: "brandRequest"
+    - type: "FIELD"
+      name: "brandRequestMapper"
+      valueUuid: "brandRequestMapper"
+      methodExercised:
+        expression: "brandRequestToBrand(brandRequest):brand"
+    - type: "FIELD"
+      name: "brandServicePort"
+      valueUuid: "brandServicePort"
+      methodExercised:
+        expression: "saveBrand(brand):void"
+    - type: "STATIC"
+      name: "ResponseEntity.class.real"
+      valueUuid: "ResponseEntity.class.real"
+      methodExercised:
+        expression: "status(Enum-org.springframework.http.HttpStatus-CREATED):responseEntityBodyBuilder"
+    - type: "RESULT"
+      name: "result"
+      valueUuid: "responseEntity"
+    disabled: true
+    failureReason:
+      reason: "VARIABLE_THAT_COULD_NOT_BE_ISOLATED_MOCKED"
+      source: "return ResponseEntity.status(HttpStatus.CREATED).build();"
+      lineNumber: 39
+      details: "A variable could not be isolated/mocked when calling a method - Variable\
+        \ name: object of type ResponseEntity.BodyBuilder - Method: build"
+    disabledStatusUpdatedBy: "SYSTEM"
+    allValues:
+    - sapientType: "OBJECT"
+      content: !<new>
+        target: "com.emazon.stock.ports.application.http.controller.brand.BrandRestController"
+        parameters:
+        - name: "brandServicePort"
+          value:
+            sapientType: "MOCK"
+            valueType: "com.emazon.stock.domain.api.IBrandServicePort"
+            uuid: "brandServicePort"
+        - name: "brandRequestMapper"
+          value:
+            sapientType: "MOCK"
+            valueType: "com.emazon.stock.ports.application.http.mapper.brand.IBrandRequestMapper"
+            uuid: "brandRequestMapper"
+      valueType: "com.emazon.stock.ports.application.http.controller.brand.BrandRestController"
+      uuid: "target"
+    - sapientType: "OBJECT"
+      content: !<new>
+        target: "com.emazon.stock.ports.application.http.dto.brand.BrandRequest"
+        parameters: []
+      valueType: "com.emazon.stock.ports.application.http.dto.brand.BrandRequest"
+      uuid: "brandRequest"
+    - sapientType: "MOCK"
+      valueType: "com.emazon.stock.ports.application.http.mapper.brand.IBrandRequestMapper"
+      uuid: "brandRequestMapper"
+    - sapientType: "OBJECT"
+      content: !<new>
+        target: "com.emazon.stock.domain.model.Brand"
+        parameters: []
+      valueType: "com.emazon.stock.domain.model.Brand"
+      uuid: "brand"
+    - sapientType: "MOCK"
+      valueType: "com.emazon.stock.domain.api.IBrandServicePort"
+      uuid: "brandServicePort"
+    - sapientType: "VOID"
+      valueType: "void"
+      uuid: "void"
+    - sapientType: "REAL"
+      valueType: "org.springframework.http.ResponseEntity"
+      uuid: "ResponseEntity.class.real"
+    - sapientType: "OBJECT"
+      content: !<static_method_return>
+        target: "org.springframework.http.ResponseEntity"
+        method: "status"
+        methodParameters:
+        - value:
+            sapientType: "ENUM"
+            content: !<regular>
+              value: "CREATED"
+            valueType: "org.springframework.http.HttpStatus"
+            uuid: "Enum-org.springframework.http.HttpStatus-CREATED"
+      valueType: "org.springframework.http.ResponseEntity$BodyBuilder"
+      uuid: "responseEntityBodyBuilder"
+    - sapientType: "ENUM"
+      content: !<regular>
+        value: "CREATED"
+      valueType: "org.springframework.http.HttpStatus"
+      uuid: "Enum-org.springframework.http.HttpStatus-CREATED"
+    - sapientType: "OBJECT"
+      content: !<method_return_from_value>
+        target: "org.springframework.http.ResponseEntity"
+        localVariableValue:
+          sapientType: "OBJECT"
+          content: !<static_method_return>
+            target: "org.springframework.http.ResponseEntity"
+            method: "status"
+            methodParameters:
+            - value:
+                sapientType: "ENUM"
+                content: !<regular>
+                  value: "CREATED"
+                valueType: "org.springframework.http.HttpStatus"
+                uuid: "Enum-org.springframework.http.HttpStatus-CREATED"
+          valueType: "org.springframework.http.ResponseEntity$BodyBuilder"
+          uuid: "responseEntityBodyBuilder"
+        methodParameters: []
+        methodName: "build"
+      valueType: "org.springframework.http.ResponseEntity"
+      genericValueType: "java.lang.Void"
+      uuid: "responseEntity"

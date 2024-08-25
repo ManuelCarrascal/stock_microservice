@@ -3,8 +3,10 @@ package com.emazon.stock.domain.api.usecase;
 import com.emazon.stock.domain.api.IBrandServicePort;
 import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
 import com.emazon.stock.domain.model.Brand;
+import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.spi.brand.IBrandPersistencePort;
 import com.emazon.stock.domain.util.EntityConstants;
+import com.emazon.stock.domain.util.PaginationUtil;
 
 public class BrandUseCase implements IBrandServicePort {
 
@@ -19,5 +21,10 @@ public class BrandUseCase implements IBrandServicePort {
             throw new EntityAlreadyExistsException(EntityConstants.BRAND_ENTITY_NAME.getName());
         }
         brandPersistencePort.saveBrand(brand);
+    }
+
+    @Override
+    public Pagination<Brand> getAllBrandsPaginated(PaginationUtil paginationUtil) {
+        return brandPersistencePort.getAllBrandsPaginated(paginationUtil);
     }
 }
