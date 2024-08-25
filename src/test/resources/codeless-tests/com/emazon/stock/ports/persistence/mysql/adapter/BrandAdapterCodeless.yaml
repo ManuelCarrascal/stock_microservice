@@ -1,0 +1,71 @@
+---
+class: "com.emazon.stock.ports.persistence.mysql.adapter.BrandAdapter"
+fields:
+- "IBrandRepository brandRepository"
+- "IBrandEntityMapper brandEntityMapper"
+imports:
+- "com.emazon.stock.ports.persistence.mysql.mapper.IBrandEntityMapper"
+- "com.emazon.stock.ports.persistence.mysql.repository.IBrandRepository"
+- "com.emazon.stock.domain.model.Brand"
+- "void"
+- "com.emazon.stock.ports.persistence.mysql.entity.BrandEntity"
+- "java.lang.Object"
+- "java.lang.String"
+- "java.util.Optional"
+methods:
+- targetMethod: "saveBrand(Brand brand): void result"
+  tests:
+  - name: "saveBrandTest"
+    target: "NEW BrandAdapter(IBrandRepository brandRepository,IBrandEntityMapper\
+      \ brandEntityMapper)"
+    disabled: true
+    variables:
+    - brand: "MOCK"
+    - brandEntityMapper: "MOCK"
+      mock-expressions:
+      - "toEntity(Brand brand): BrandEntity brandEntity"
+    - brandEntity: "MOCK"
+    - brandRepository: "MOCK"
+      mock-expressions:
+      - "save(BrandEntity brandEntity): Object object"
+    - object: "NEW Object()"
+    - expectedResult: "VOID"
+    - result: "REF expectedResult"
+    failureReason:
+      type: "UNKNOWN_REASON"
+  sourceCodeSignature: "void saveBrand(Brand brand)"
+- targetMethod: "brandExistsByName(String brandName): boolean result"
+  tests:
+  - name: "brandExistsByNameWhenBrandRepositoryFindByBrandNameBrandNameIsPresent"
+    target: "NEW BrandAdapter(IBrandRepository brandRepository,IBrandEntityMapper\
+      \ brandEntityMapper)"
+    variables:
+    - brandName: "brandName1"
+    - brandRepository: "MOCK"
+      mock-expressions:
+      - "findByBrandName(String brandName): Optional<BrandEntity> optional"
+    - optional-value: "MOCK"
+    - optional: "EVAL Optional.ofNullable(BrandEntity optional-value)"
+    - brandEntityMapper: "MOCK"
+    - boolean1: true
+    - result: "REF boolean1"
+    branches:
+    - expression: "brandRepository.findByBrandName(brandName).isPresent() : true"
+      lineNumber: 22
+  - name: "brandExistsByNameWhenBrandRepositoryFindByBrandNameBrandNameNotIsPresent"
+    target: "NEW BrandAdapter(IBrandRepository brandRepository,IBrandEntityMapper\
+      \ brandEntityMapper)"
+    variables:
+    - brandName: "brandName1"
+    - brandRepository: "MOCK"
+      mock-expressions:
+      - "findByBrandName(String brandName): Optional<BrandEntity> optional"
+    - uniqueUuid1: "NULL"
+    - optional: "EVAL Optional.ofNullable(BrandEntity uniqueUuid1)"
+    - brandEntityMapper: "MOCK"
+    - boolean1: false
+    - result: "REF boolean1"
+    branches:
+    - expression: "brandRepository.findByBrandName(brandName).isPresent() : false"
+      lineNumber: 22
+  sourceCodeSignature: "boolean brandExistsByName(String brandName)"

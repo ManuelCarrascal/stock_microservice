@@ -1,0 +1,49 @@
+---
+class: "com.emazon.stock.ports.application.http.controller.brand.BrandRestController"
+test-type: "SpringWebMvc"
+fields:
+- "IBrandServicePort brandServicePort"
+- "IBrandRequestMapper brandRequestMapper"
+imports:
+- "com.emazon.stock.ports.application.http.mapper.brand.IBrandRequestMapper"
+- "com.emazon.stock.domain.api.IBrandServicePort"
+- "com.emazon.stock.ports.application.http.dto.brand.BrandRequest"
+- "java.lang.Void"
+- "org.springframework.http.ResponseEntity"
+- "com.emazon.stock.domain.model.Brand"
+- "org.springframework.http.HttpStatus"
+- "org.springframework.http.ResponseEntity$BodyBuilder"
+methods:
+- targetMethod: "saveBrand(BrandRequest brandRequest): ResponseEntity<Void> result"
+  tests:
+  - name: "saveBrandTest"
+    target: "NEW BrandRestController(IBrandServicePort brandServicePort,IBrandRequestMapper\
+      \ brandRequestMapper)"
+    disabled: true
+    variables:
+    - brandRequest: "NEW BrandRequest()"
+    - brandRequestMapper: "MOCK"
+      mock-expressions:
+      - "brandRequestToBrand(BrandRequest brandRequest): Brand brand"
+    - brand: "NEW Brand()"
+    - brandServicePort: "MOCK"
+      mock-expressions:
+      - "saveBrand(Brand brand): null void"
+    - void: "VOID"
+    - ResponseEntity.class.real: "EVAL ResponseEntity.class"
+      method-calls:
+      - "status(HttpStatus Enum-org.springframework.http.HttpStatus-CREATED): ResponseEntity.BodyBuilder\
+        \ responseEntityBodyBuilder"
+    - Enum-org.springframework.http.HttpStatus-CREATED: "EVAL Enum.valueOf(HttpStatus,\
+        \ CREATED)"
+    - responseEntityBodyBuilder: "EVAL ResponseEntity.status(HttpStatus Enum-org.springframework.http.HttpStatus-CREATED):ResponseEntity.BodyBuilder"
+    - responseEntity: "EVAL responseEntityBodyBuilder.build():ResponseEntity<Void>"
+    - result: "REF responseEntity"
+    failureReason:
+      type: "VARIABLE_THAT_COULD_NOT_BE_ISOLATED_MOCKED"
+      source: "return ResponseEntity.status(HttpStatus.CREATED).build();"
+      lineNumber: 39
+      details: "A variable could not be isolated/mocked when calling a method - Variable\
+        \ name: object of type ResponseEntity.BodyBuilder - Method: build"
+  sourceCodeSignature: "ResponseEntity<Void> saveBrand(@Valid @RequestBody BrandRequest\
+    \ brandRequest)"
