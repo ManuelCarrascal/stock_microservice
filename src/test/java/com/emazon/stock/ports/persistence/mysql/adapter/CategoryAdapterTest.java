@@ -42,7 +42,6 @@ class CategoryAdapterTest {
 
     @Test
     void saveCategoryTest() {
-        // Arrange
         Category categoryMock = mock(Category.class);
         CategoryEntity categoryEntityMockTest = mock(CategoryEntity.class);
 
@@ -51,10 +50,8 @@ class CategoryAdapterTest {
 
         CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
 
-        // Act
         target.saveCategory(categoryMock);
 
-        // Assert
         assertAll("result",
                 () -> verify(categoryEntityMapperMock).toEntity(categoryMock),
                 () -> verify(categoryRepositoryMock).save(categoryEntityMockTest)
@@ -64,16 +61,11 @@ class CategoryAdapterTest {
     @Test()
     void categoryExistsByNameWhenCategoryRepositoryFindByCategoryNameCategoryNameIsPresent() {
 
-        // (categoryRepository.findByCategoryName(categoryName).isPresent()) : true
-
-        //Arrange Statement
         doReturn(Optional.of(categoryEntityMock)).when(categoryRepositoryMock).findByCategoryName("Electronics");
         CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
 
-        //Act Statement
         boolean result = target.categoryExistsByName("Electronics");
 
-        //Assert statement
         assertAll("result", () -> {
             assertThat(result, equalTo(Boolean.TRUE));
             verify(categoryRepositoryMock).findByCategoryName("Electronics");
@@ -83,16 +75,11 @@ class CategoryAdapterTest {
     @Test()
     void categoryExistsByNameWhenCategoryRepositoryFindByCategoryNameCategoryNameNotIsPresent() {
 
-        //(categoryRepository.findByCategoryName(categoryName).isPresent()) : false
-
-        //Arrange Statement
         doReturn(Optional.empty()).when(categoryRepositoryMock).findByCategoryName("Electronics");
         CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
 
-        //Act Statement
         boolean result = target.categoryExistsByName("Electronics");
 
-        //Assert statement
         assertAll("result", () -> {
             assertThat(result, equalTo(Boolean.FALSE));
             verify(categoryRepositoryMock).findByCategoryName("Electronics");
@@ -101,7 +88,6 @@ class CategoryAdapterTest {
 
     @Test
     void getAllCategoriesPaginatedWhenPaginationUtilIsAscending() {
-        // Arrange
         try (MockedStatic<Sort> sortMockStatic = mockStatic(Sort.class);
              MockedStatic<PageRequest> pageRequestMockStatic = mockStatic(PageRequest.class, CALLS_REAL_METHODS)) {
 
@@ -125,10 +111,8 @@ class CategoryAdapterTest {
 
             CategoryAdapter categoryAdapter = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
 
-            // Act
             Pagination<Category> result = categoryAdapter.getAllCategoriesPaginated(paginationUtil);
 
-            // Assert
             assertThat(result.getContent(), is(categoryList));
             assertThat(result.getTotalPages(), is(0));
             assertThat(result.getTotalElements(), is(1L));
@@ -145,7 +129,6 @@ class CategoryAdapterTest {
 
     @Test
     void getAllCategoriesPaginatedWhenPaginationUtilNotIsAscending() {
-        // Arrange
         try (MockedStatic<Sort> sortMockStatic = mockStatic(Sort.class);
              MockedStatic<PageRequest> pageRequestMockStatic = mockStatic(PageRequest.class, CALLS_REAL_METHODS)) {
 
@@ -167,10 +150,8 @@ class CategoryAdapterTest {
             paginationUtil.setAscending(false);
             paginationUtil.setNameFilter("nameCategory");
             CategoryAdapter categoryAdapter = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
-            // Act
             Pagination<Category> result = categoryAdapter.getAllCategoriesPaginated(paginationUtil);
 
-            // Assert
             assertThat(result.getContent(), is(categoryList));
             assertThat(result.getTotalPages(), is(0));
             assertThat(result.getTotalElements(), is(1L));

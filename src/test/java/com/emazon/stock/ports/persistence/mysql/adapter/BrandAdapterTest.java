@@ -32,7 +32,6 @@ class BrandAdapterTest {
 
     private final BrandEntity brandEntityMock = mock(BrandEntity.class);
 
-
     private final PageRequest pageRequestMock = mock(PageRequest.class);
 
     private final Sort sortMock = mock(Sort.class);
@@ -40,7 +39,6 @@ class BrandAdapterTest {
 
     @Test
     void saveBrandTest() {
-        // Arrange
         Brand brandMock = mock(Brand.class);
 
         doReturn(brandEntityMock).when(brandEntityMapperMock).toEntity(brandMock);
@@ -48,10 +46,8 @@ class BrandAdapterTest {
 
         BrandAdapter target = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
 
-        // Act
         target.saveBrand(brandMock);
 
-        // Assert
         assertAll("result",
                 () -> verify(brandEntityMapperMock).toEntity(brandMock),
                 () -> verify(brandRepositoryMock).save(brandEntityMock)
@@ -61,14 +57,9 @@ class BrandAdapterTest {
     @Test()
     void brandExistsByNameWhenBrandRepositoryFindByBrandNameBrandNameIsPresent() {
 
-         //(brandRepository.findByBrandName(brandName).isPresent()) : true
-
-        //Arrange Statement
         doReturn(Optional.of(brandEntityMock)).when(brandRepositoryMock).findByBrandName("Samsung");
         BrandAdapter target = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
-        //Act Statement(s)
         boolean result = target.brandExistsByName("Samsung");
-        //Assert statement
         assertAll("result", () -> {
             assertThat(result, equalTo(Boolean.TRUE));
             verify(brandRepositoryMock).findByBrandName("Samsung");
@@ -78,14 +69,9 @@ class BrandAdapterTest {
     @Test()
     void brandExistsByNameWhenBrandRepositoryFindByBrandNameBrandNameNotIsPresent() {
 
-         // (brandRepository.findByBrandName(brandName).isPresent()) : false
-
-        //Arrange Statement
         doReturn(Optional.empty()).when(brandRepositoryMock).findByBrandName("Samsung");
         BrandAdapter target = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
-        //Act Statement
         boolean result = target.brandExistsByName("Samsung");
-        //Assert statement
         assertAll("result", () -> {
             assertThat(result, equalTo(Boolean.FALSE));
             verify(brandRepositoryMock).findByBrandName("Samsung");
@@ -94,7 +80,6 @@ class BrandAdapterTest {
 
     @Test
     void getAllBrandsPaginatedWhenPaginationUtilIsAscending() {
-        // Arrange
         try (MockedStatic<Sort> sortMockStatic = mockStatic(Sort.class);
              MockedStatic<PageRequest> pageRequestMockStatic = mockStatic(PageRequest.class, CALLS_REAL_METHODS)) {
 
@@ -119,10 +104,8 @@ class BrandAdapterTest {
             paginationUtil.setNameFilter("brandName");
             BrandAdapter brandAdapter = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
 
-            // Act
             Pagination<Brand> result = brandAdapter.getAllBrandsPaginated(paginationUtil);
 
-            // Assert
             assertThat(result.getContent(), is(brandList));
             assertThat(result.getTotalPages(), is(0));
             assertThat(result.getTotalElements(), is(1L));
@@ -139,7 +122,6 @@ class BrandAdapterTest {
 
     @Test
     void getAllBrandsPaginatedWhenPaginationUtilNotIsAscending() {
-        // Arrange
         try (MockedStatic<Sort> sortMockStatic = mockStatic(Sort.class);
              MockedStatic<PageRequest> pageRequestMockStatic = mockStatic(PageRequest.class, CALLS_REAL_METHODS)) {
 
@@ -164,10 +146,8 @@ class BrandAdapterTest {
             paginationUtil.setNameFilter("brandName");
             BrandAdapter brandAdapter = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
 
-            // Act
             Pagination<Brand> result = brandAdapter.getAllBrandsPaginated(paginationUtil);
 
-            // Assert
             assertThat(result.getContent(), is(brandList));
             assertThat(result.getTotalPages(), is(0));
             assertThat(result.getTotalElements(), is(1L));
