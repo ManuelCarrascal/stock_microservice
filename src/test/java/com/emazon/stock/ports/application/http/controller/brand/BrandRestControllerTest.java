@@ -73,7 +73,6 @@ class BrandRestControllerTest {
 
     @Test
     void saveBrandTest() throws Exception {
-        // Arrange
         BrandRequest brandRequest = new BrandRequest("Samsumg", "Samsumg description"); // Example request data
         Brand brand = new Brand(); // Mocked Brand object
 
@@ -82,13 +81,11 @@ class BrandRestControllerTest {
 
         String contentStr = new ObjectMapper().writeValueAsString(brandRequest);
 
-        // Act
         ResultActions resultActions = this.mockMvc.perform(post("/brands")
                 .content(contentStr)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
-        // Assert
         resultActions.andExpect(status().isCreated());
     }
 
@@ -101,7 +98,6 @@ class BrandRestControllerTest {
         List<BrandResponse> brandResponseList = new ArrayList<>();
         doReturn(brandResponseList).when(brandResponseMapperMock).brandsToBrandResponses(brandList);
 
-        // Act
         ResultActions resultActions = this.mockMvc.perform(get("/brands")
                 .param("size", String.valueOf(1))
                 .param("page", String.valueOf(0))
@@ -110,7 +106,6 @@ class BrandRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
-        // Assert
         resultActions.andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalPages", is(0)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.ascending", is(false)))
@@ -118,7 +113,6 @@ class BrandRestControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content", hasSize(0)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements", is(0)));
     }
-
 
     @SpringBootApplication(scanBasePackageClasses = BrandRestController.class)
     static class BrandRestControllerSapientGeneratedTestConfig {

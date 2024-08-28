@@ -6,7 +6,6 @@ import com.emazon.stock.ports.application.http.dto.CategoryResponse;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
 import org.junit.jupiter.api.Timeout;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +21,7 @@ import org.springframework.http.MediaType;
 import com.emazon.stock.domain.model.Category;
 import org.springframework.test.web.servlet.ResultActions;
 import com.emazon.stock.ports.application.http.dto.CategoryRequest;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,6 @@ import static org.mockito.Mockito.doReturn;
 @ContextConfiguration(classes = CategoryRestController.class)
 class CategoryRestControllerTest {
 
-    @Autowired()
     private MockMvc mockMvc;
 
     @MockBean(name = "categoryRequestMapper")
@@ -59,6 +58,8 @@ class CategoryRestControllerTest {
     @BeforeEach()
     public void beforeTest() {
         autoCloseableMocks = MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryRestController(categoryServicePortMock, categoryRequestMapperMock, categoryResponseMapperMock)).build();
+
     }
 
     @AfterEach()
@@ -69,7 +70,6 @@ class CategoryRestControllerTest {
 
     @Test
     void saveCategoryTest() throws Exception {
-        // Arrange
         CategoryRequest categoryRequest = new CategoryRequest("Electronics", "All electronic items");
 
         String contentStr = new ObjectMapper().writeValueAsString(categoryRequest);
@@ -78,26 +78,22 @@ class CategoryRestControllerTest {
         doReturn(category).when(categoryRequestMapperMock).categoryRequestToCategory(categoryRequest);
         doNothing().when(categoryServicePortMock).saveCategory(category);
 
-        // Act
         ResultActions resultActions = this.mockMvc.perform(post("/categories")
                 .content(contentStr)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
-        // Assert
         resultActions.andExpect(status().isCreated());
     }
 
     @Test
     void getAllCategoriesPaginatedTest() throws Exception {
-        // Arrange
         List<Category> categoryList = new ArrayList<>();
         Pagination<Category> pagination = new Pagination<>(false, 0, 0, 0L, categoryList);
         doReturn(pagination).when(categoryServicePortMock).getAllCategoriesPaginated(any(PaginationUtil.class));
         List<CategoryResponse> categoryResponseList = new ArrayList<>();
         doReturn(categoryResponseList).when(categoryResponseMapperMock).categoriesToCategoryResponses(categoryList);
 
-        // Act
         ResultActions resultActions = this.mockMvc.perform(get("/categories")
                 .param("size", String.valueOf(0))
                 .param("page", String.valueOf(0))
@@ -106,13 +102,12 @@ class CategoryRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 
-        // Assert
         resultActions.andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalPages", is(0)))
                 .andExpect(jsonPath("$.ascending", is(false)))
                 .andExpect(jsonPath("$.currentPage", is(0)))
                 .andExpect(jsonPath("$.content", hasSize(0)))
-                .andExpect(jsonPath("$.totalElements", is(0)));  // Cambiado para comparar con un Integer en lugar de Long
+                .andExpect(jsonPath("$.totalElements", is(0)));
     }
 
     @SpringBootApplication(scanBasePackageClasses = CategoryRestController.class)

@@ -1,15 +1,16 @@
 package com.emazon.stock.ports.persistence.mysql.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Table(name = "category")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +23,6 @@ public class CategoryEntity {
     @Column(name = "category_description", nullable = false, length = 90)
     private String categoryDescription;
 
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.EAGER)
+    private Set<ProductEntity> products;
 }
