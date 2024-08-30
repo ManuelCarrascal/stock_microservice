@@ -32,7 +32,7 @@ public class CategoryAdapter implements ICategoryPersistencePort {
     @Override
     public Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil) {
         Sort.Direction sortDirection = paginationUtil.isAscending()? Sort.Direction.ASC : Sort.Direction.DESC;
-        PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize(), Sort.by(sortDirection, paginationUtil.getNameFilter()));
+        PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize(), Sort.by(sortDirection, paginationUtil.getSortBy()));
         Page<CategoryEntity> categoryPage = categoryRepository.findAll(pageRequest);
         List<Category> categories = categoryEntityMapper.toCategoryList(categoryPage.getContent());
 
@@ -44,4 +44,10 @@ public class CategoryAdapter implements ICategoryPersistencePort {
                 categories
         );
     }
-}
+    @Override
+    public List<Category> getAllByProduct(Long idProduct) {
+        List<CategoryEntity> categories = categoryRepository.findCategoriesByProductId(idProduct);
+        return categoryEntityMapper.toCategoryList(categories);
+    }
+
+   }

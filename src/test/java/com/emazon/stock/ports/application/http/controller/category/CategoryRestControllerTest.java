@@ -2,7 +2,7 @@ package com.emazon.stock.ports.application.http.controller.category;
 
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.util.PaginationUtil;
-import com.emazon.stock.ports.application.http.dto.CategoryResponse;
+import com.emazon.stock.ports.application.http.dto.category.CategoryResponse;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
 import org.junit.jupiter.api.Timeout;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
 import com.emazon.stock.domain.model.Category;
 import org.springframework.test.web.servlet.ResultActions;
-import com.emazon.stock.ports.application.http.dto.CategoryRequest;
+import com.emazon.stock.ports.application.http.dto.category.CategoryRequest;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;

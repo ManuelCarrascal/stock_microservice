@@ -10,7 +10,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface IBrandEntityMapper {
     BrandEntity toEntity (Brand brand);
+    Brand toBrand (BrandEntity brandEntity);
     List<Brand> toBrandList(List<BrandEntity> brandEntityList);
+
+
     @Named("idToBrand")
     default BrandEntity idToBrand(Long brandId) {
         BrandEntity brandEntity = new BrandEntity();

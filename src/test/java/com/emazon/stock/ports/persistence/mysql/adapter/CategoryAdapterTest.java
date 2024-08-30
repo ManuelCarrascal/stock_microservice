@@ -9,6 +9,7 @@ import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.ports.persistence.mysql.entity.CategoryEntity;
 import com.emazon.stock.ports.persistence.mysql.repository.ICategoryRepository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -107,7 +108,7 @@ class CategoryAdapterTest {
             paginationUtil.setPageNumber(0);
             paginationUtil.setPageSize(0);
             paginationUtil.setAscending(true);
-            paginationUtil.setNameFilter("categoryName");
+            paginationUtil.setSortBy("categoryName");
 
             CategoryAdapter categoryAdapter = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
 
@@ -148,7 +149,7 @@ class CategoryAdapterTest {
             paginationUtil.setPageNumber(0);
             paginationUtil.setPageSize(0);
             paginationUtil.setAscending(false);
-            paginationUtil.setNameFilter("nameCategory");
+            paginationUtil.setSortBy("nameCategory");
             CategoryAdapter categoryAdapter = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
             Pagination<Category> result = categoryAdapter.getAllCategoriesPaginated(paginationUtil);
 
@@ -164,6 +165,23 @@ class CategoryAdapterTest {
             sortMockStatic.verify(() -> Sort.by(Sort.Direction.DESC, "nameCategory"));
             pageRequestMockStatic.verify(() -> PageRequest.of(0, 0, sortMock));
         }
+    }
+
+    @Test()
+    void getAllByProductTest() {
+        List<CategoryEntity> categoryEntityList = new ArrayList<>();
+        doReturn(categoryEntityList).when(categoryRepositoryMock).findCategoriesByProductId(0L);
+        List<Category> categoryList = new ArrayList<>();
+        doReturn(categoryList).when(categoryEntityMapperMock).toCategoryList(categoryEntityList);
+        CategoryAdapter target = new CategoryAdapter(categoryRepositoryMock, categoryEntityMapperMock);
+
+        List<Category> result = target.getAllByProduct(0L);
+
+        assertAll("result", () -> {
+            assertThat(result, equalTo(categoryList));
+            verify(categoryRepositoryMock).findCategoriesByProductId(0L);
+            verify(categoryEntityMapperMock).toCategoryList(categoryEntityList);
+        });
     }
 }
 

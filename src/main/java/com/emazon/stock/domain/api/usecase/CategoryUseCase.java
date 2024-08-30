@@ -7,11 +7,14 @@ import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.spi.category.ICategoryPersistencePort;
 import com.emazon.stock.domain.util.PaginationUtil;
 
+import java.util.List;
+
+
 public class CategoryUseCase implements ICategoryServicePort {
 
     private final ICategoryPersistencePort categoryPersistencePort;
 
-    public CategoryUseCase(ICategoryPersistencePort categoryPersistencePort){
+    public CategoryUseCase(ICategoryPersistencePort categoryPersistencePort) {
         this.categoryPersistencePort = categoryPersistencePort;
     }
 
@@ -27,4 +30,11 @@ public class CategoryUseCase implements ICategoryServicePort {
     public Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil) {
         return categoryPersistencePort.getAllCategoriesPaginated(paginationUtil);
     }
+
+    @Override
+    public List<Category> getAllByProduct(Long idProduct) {
+        return categoryPersistencePort.getAllByProduct(idProduct);
+    }
+
+
 }
