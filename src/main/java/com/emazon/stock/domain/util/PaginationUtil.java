@@ -3,16 +3,16 @@ package com.emazon.stock.domain.util;
 public class PaginationUtil {
     private int pageSize;
     private int pageNumber;
-    private String nameFilter;
+    private String sortBy;
     private boolean ascending;
 
     public PaginationUtil() {
     }
 
-    public PaginationUtil(int pageSize, int pageNumber, String nameFilter, boolean ascending) {
+    public PaginationUtil(int pageSize, int pageNumber, String sortBy, boolean ascending) {
         this.pageSize = pageSize;
         this.pageNumber = pageNumber;
-        this.nameFilter = nameFilter;
+        this.sortBy = sortBy;
         this.ascending = ascending;
     }
 
@@ -32,12 +32,12 @@ public class PaginationUtil {
         this.pageNumber = pageNumber;
     }
 
-    public String getNameFilter() {
-        return nameFilter;
+    public String getSortBy() {
+        return sortBy;
     }
 
-    public void setNameFilter(String nameFilter) {
-        this.nameFilter = nameFilter;
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
     }
 
     public boolean isAscending() {

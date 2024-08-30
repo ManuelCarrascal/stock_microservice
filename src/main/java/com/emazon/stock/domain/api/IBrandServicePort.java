@@ -7,4 +7,5 @@ import com.emazon.stock.domain.util.PaginationUtil;
 public interface IBrandServicePort {
     void saveBrand(Brand brand);
     Pagination<Brand> getAllBrandsPaginated(PaginationUtil paginationUtil);
+    Brand brandGetById(Long brandId);
 }

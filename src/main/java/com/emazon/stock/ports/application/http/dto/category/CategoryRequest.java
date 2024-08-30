@@ -1,4 +1,4 @@
-package com.emazon.stock.ports.application.http.dto;
+package com.emazon.stock.ports.application.http.dto.category;
 
 import com.emazon.stock.ports.application.http.util.CategoryValidationConstants;
 import io.swagger.v3.oas.annotations.media.Schema;

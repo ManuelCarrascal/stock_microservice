@@ -101,7 +101,7 @@ class BrandAdapterTest {
             paginationUtil.setPageNumber(0);
             paginationUtil.setPageSize(0);
             paginationUtil.setAscending(true);
-            paginationUtil.setNameFilter("brandName");
+            paginationUtil.setSortBy("brandName");
             BrandAdapter brandAdapter = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
 
             Pagination<Brand> result = brandAdapter.getAllBrandsPaginated(paginationUtil);
@@ -143,7 +143,7 @@ class BrandAdapterTest {
             paginationUtil.setPageNumber(0);
             paginationUtil.setPageSize(0);
             paginationUtil.setAscending(false);
-            paginationUtil.setNameFilter("brandName");
+            paginationUtil.setSortBy("brandName");
             BrandAdapter brandAdapter = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
 
             Pagination<Brand> result = brandAdapter.getAllBrandsPaginated(paginationUtil);
@@ -160,6 +160,23 @@ class BrandAdapterTest {
             sortMockStatic.verify(() -> Sort.by(Sort.Direction.DESC, "brandName"));
             pageRequestMockStatic.verify(() -> PageRequest.of(0, 0, sortMock));
         }
+    }
+    @Test
+    void brandGetByIdTest() {
+        // Arrange
+        Brand brandMock = mock(Brand.class); // Ensure this is a Brand object
+        doReturn(Optional.of(brandEntityMock)).when(brandRepositoryMock).findById(0L);
+        doReturn(brandMock).when(brandEntityMapperMock).toBrand(brandEntityMock);
+
+        BrandAdapter target = new BrandAdapter(brandRepositoryMock, brandEntityMapperMock);
+
+        Brand result = target.brandGetById(0L);
+
+        assertAll("result",
+                () -> assertThat(result, is(equalTo(brandMock))),
+                () -> verify(brandRepositoryMock).findById(0L),
+                () -> verify(brandEntityMapperMock).toBrand(brandEntityMock)
+        );
     }
 
 }

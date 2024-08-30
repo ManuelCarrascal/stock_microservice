@@ -1,12 +1,11 @@
-package com.emazon.stock.ports.application.http.dto;
+package com.emazon.stock.ports.application.http.dto.category;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "Response DTO for Category")

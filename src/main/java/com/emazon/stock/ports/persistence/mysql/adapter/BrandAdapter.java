@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class BrandAdapter implements IBrandPersistencePort {
@@ -33,7 +34,7 @@ public class BrandAdapter implements IBrandPersistencePort {
     @Override
     public Pagination<Brand> getAllBrandsPaginated(PaginationUtil paginationUtil) {
         Sort.Direction sortDirection = paginationUtil.isAscending()? Sort.Direction.ASC : Sort.Direction.DESC;
-        PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize(), Sort.by(sortDirection, paginationUtil.getNameFilter()));
+        PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize(), Sort.by(sortDirection, paginationUtil.getSortBy()));
         Page<BrandEntity> brandPage = brandRepository.findAll(pageRequest);
         List<Brand> brands = brandEntityMapper.toBrandList(brandPage.getContent());
         return new Pagination<>(
@@ -43,5 +44,11 @@ public class BrandAdapter implements IBrandPersistencePort {
                 brandPage.getTotalElements(),
                 brands
         );
+    }
+
+    @Override
+    public Brand brandGetById(Long brandId) {
+        Optional<BrandEntity> brandEntityOptional = brandRepository.findById(brandId);
+        return brandEntityOptional.map(brandEntityMapper::toBrand).orElse(null);
     }
 }

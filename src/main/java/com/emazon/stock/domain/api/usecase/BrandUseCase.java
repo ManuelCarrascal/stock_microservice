@@ -27,4 +27,9 @@ public class BrandUseCase implements IBrandServicePort {
     public Pagination<Brand> getAllBrandsPaginated(PaginationUtil paginationUtil) {
         return brandPersistencePort.getAllBrandsPaginated(paginationUtil);
     }
+
+    @Override
+    public Brand brandGetById(Long brandId) {
+        return  brandPersistencePort.brandGetById(brandId);
+    }
 }

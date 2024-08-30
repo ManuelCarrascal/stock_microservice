@@ -1,6 +1,7 @@
 package com.emazon.stock.infrastructure.configuration.exceptionhandler;
 
 import com.emazon.stock.domain.exception.InvalidPageIndexException;
+import com.emazon.stock.domain.exception.InvalidSortByException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -45,5 +46,10 @@ public class HandlerControllerAdvisor {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         return new ResponseEntity<>("Error: " + Objects.requireNonNull(ex.getRootCause()).getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidSortByException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidSortByException(InvalidSortByException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Error", ex.getMessage()));
     }
 }

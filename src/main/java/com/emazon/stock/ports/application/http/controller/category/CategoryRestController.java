@@ -4,8 +4,8 @@ import com.emazon.stock.domain.api.ICategoryServicePort;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.util.PaginationUtil;
-import com.emazon.stock.ports.application.http.dto.CategoryRequest;
-import com.emazon.stock.ports.application.http.dto.CategoryResponse;
+import com.emazon.stock.ports.application.http.dto.category.CategoryRequest;
+import com.emazon.stock.ports.application.http.dto.category.CategoryResponse;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,15 +52,15 @@ public class CategoryRestController {
     @GetMapping
     public ResponseEntity<Pagination<CategoryResponse>> getAllCategoriesPaginated(
             @Parameter(description = "Page number", example = "1")
-            @RequestParam(defaultValue = "1", required = false) int page,
+            @RequestParam(defaultValue = "0", required = false) int page,
             @Parameter(description = "Page size", example = "10")
             @RequestParam(defaultValue = "1", required = false) int size,
             @Parameter(description = "Category name filter", example = "categoryName")
-            @RequestParam(defaultValue = "categoryName",required = false) String nameFilter,
+            @RequestParam(defaultValue = "categoryName",required = false) String sortBy,
             @Parameter(description = "Sort order", example = "true")
             @RequestParam(defaultValue = "true",required = false) boolean isAscending
     ) {
-        Pagination<Category> categoryPagination = categoryServicePort.getAllCategoriesPaginated(new PaginationUtil(size,page, nameFilter, isAscending));
+        Pagination<Category> categoryPagination = categoryServicePort.getAllCategoriesPaginated(new PaginationUtil(size,page, sortBy, isAscending));
         List<Category> categories = categoryPagination.getContent();
 
         return ResponseEntity.ok(
