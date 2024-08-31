@@ -1,5 +1,7 @@
 package com.emazon.stock.ports.application.http.dto.category;
 
+import com.emazon.stock.ports.application.http.util.openapi.category.CategoryProductResponseConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,11 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = CategoryProductResponseConstants.CATEGORY_PRODUCT_RESPONSE_DESCRIPTION)
 public class CategoryProductResponse implements Serializable {
+    @Schema(description = CategoryProductResponseConstants.CATEGORY_ID_DESCRIPTION, example = CategoryProductResponseConstants.CATEGORY_ID_EXAMPLE)
     private Long categoryId;
+
+    @Schema(description = CategoryProductResponseConstants.CATEGORY_NAME_DESCRIPTION, example = CategoryProductResponseConstants.CATEGORY_NAME_EXAMPLE)
     private String categoryName;
 }

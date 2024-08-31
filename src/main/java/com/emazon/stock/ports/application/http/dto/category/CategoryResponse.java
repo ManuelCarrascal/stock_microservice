@@ -1,19 +1,23 @@
 package com.emazon.stock.ports.application.http.dto.category;
 
+import com.emazon.stock.ports.application.http.util.openapi.category.CategoryResponseConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Response DTO for Category")
+@Schema(description = CategoryResponseConstants.CATEGORY_RESPONSE_DESCRIPTION)
 public class CategoryResponse implements Serializable {
-    @Schema(description = "ID of the category", example = "1")
+    @Schema(description = CategoryResponseConstants.CATEGORY_ID_DESCRIPTION, example = CategoryResponseConstants.CATEGORY_ID_EXAMPLE)
     private Long categoryId;
-    @Schema(description = "Name of the category", example = "Electronics")
+
+    @Schema(description = CategoryResponseConstants.CATEGORY_NAME_DESCRIPTION, example = CategoryResponseConstants.CATEGORY_NAME_EXAMPLE)
     private String categoryName;
-    @Schema(description = "Description of the category", example = "Electronic devices and accessories")
+
+    @Schema(description = CategoryResponseConstants.CATEGORY_DESCRIPTION_DESCRIPTION, example = CategoryResponseConstants.CATEGORY_DESCRIPTION_EXAMPLE)
     private String categoryDescription;
 }

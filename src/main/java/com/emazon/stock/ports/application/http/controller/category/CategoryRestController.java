@@ -8,6 +8,8 @@ import com.emazon.stock.ports.application.http.dto.category.CategoryRequest;
 import com.emazon.stock.ports.application.http.dto.category.CategoryResponse;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
+import com.emazon.stock.ports.application.http.util.openapi.ResponseCodeConstants;
+import com.emazon.stock.ports.application.http.util.openapi.controller.CategoryRestControllerConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,42 +27,45 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
-@Tag(name = "Category", description = "Category API")
+@Tag(name = CategoryRestControllerConstants.TAG_NAME, description = CategoryRestControllerConstants.TAG_DESCRIPTION)
 public class CategoryRestController {
 
     private final ICategoryServicePort categoryServicePort;
     private final ICategoryRequestMapper categoryRequestMapper;
     private final ICategoryResponseMapper categoryResponseMapper;
-  
-    @Operation(summary = "Save a new category", description = "Creates a new category in the database")
+
+    @Operation(summary = CategoryRestControllerConstants.SAVE_CATEGORY_SUMMARY, description = CategoryRestControllerConstants.SAVE_CATEGORY_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Category created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content),
-            @ApiResponse(responseCode = "409", description = "Category already exists", content = @Content)
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_201_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_400_DESCRIPTION, content = @Content),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_409, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_409_DESCRIPTION, content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Void> saveCategory(@Valid @RequestBody CategoryRequest categoryRequest) {
+    public ResponseEntity<Void> saveCategory(
+            @Parameter(description = CategoryRestControllerConstants.PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION, required = true)
+            @Valid @RequestBody CategoryRequest categoryRequest) {
         Category category = categoryRequestMapper.categoryRequestToCategory(categoryRequest);
         categoryServicePort.saveCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    @Operation(summary = "Get all categories paginated", description = "Retrieves a paginated list of categories")
+
+    @Operation(summary = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_SUMMARY, description = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Categories retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters", content = @Content)
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_RESPONSE_200_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_RESPONSE_400_DESCRIPTION, content = @Content)
     })
     @GetMapping
     public ResponseEntity<Pagination<CategoryResponse>> getAllCategoriesPaginated(
-            @Parameter(description = "Page number", example = "1")
+            @Parameter(description = CategoryRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_PAGE_EXAMPLE)
             @RequestParam(defaultValue = "0", required = false) int page,
-            @Parameter(description = "Page size", example = "10")
+            @Parameter(description = CategoryRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_SIZE_EXAMPLE)
             @RequestParam(defaultValue = "1", required = false) int size,
-            @Parameter(description = "Category name filter", example = "categoryName")
-            @RequestParam(defaultValue = "categoryName",required = false) String sortBy,
-            @Parameter(description = "Sort order", example = "true")
-            @RequestParam(defaultValue = "true",required = false) boolean isAscending
+            @Parameter(description = CategoryRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
+            @RequestParam(defaultValue = "categoryName", required = false) String sortBy,
+            @Parameter(description = CategoryRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
+            @RequestParam(defaultValue = "true", required = false) boolean isAscending
     ) {
-        Pagination<Category> categoryPagination = categoryServicePort.getAllCategoriesPaginated(new PaginationUtil(size,page, sortBy, isAscending));
+        Pagination<Category> categoryPagination = categoryServicePort.getAllCategoriesPaginated(new PaginationUtil(size, page, sortBy, isAscending));
         List<Category> categories = categoryPagination.getContent();
 
         return ResponseEntity.ok(
