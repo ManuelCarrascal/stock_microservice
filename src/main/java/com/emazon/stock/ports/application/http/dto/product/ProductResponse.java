@@ -2,6 +2,7 @@ package com.emazon.stock.ports.application.http.dto.product;
 
 import com.emazon.stock.ports.application.http.dto.category.CategoryProductResponse;
 import com.emazon.stock.ports.application.http.dto.brand.BrandProductResponse;
+import com.emazon.stock.ports.application.http.util.openapi.product.ProductResponseConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,21 +16,20 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Response DTO for Product")
+@Schema(description = ProductResponseConstants.PRODUCT_RESPONSE_DESCRIPTION)
 public class ProductResponse {
-    @Schema(description = "ID of the product", example = "1")
+    @Schema(description = ProductResponseConstants.PRODUCT_ID_DESCRIPTION, example = ProductResponseConstants.PRODUCT_ID_EXAMPLE)
     private Long productId;
-    @Schema(description = "Name of the product", example = "Diadema")
+    @Schema(description = ProductResponseConstants.PRODUCT_NAME_DESCRIPTION, example = ProductResponseConstants.PRODUCT_NAME_EXAMPLE)
     private String productName;
-    @Schema(description = "Description of the product", example = "Diadema con sonido envolvente")
+    @Schema(description = ProductResponseConstants.PRODUCT_DESCRIPTION_DESCRIPTION, example = ProductResponseConstants.PRODUCT_DESCRIPTION_EXAMPLE)
     private String productDescription;
-    @Schema(description = "Quantity of the product", example = "5")
+    @Schema(description = ProductResponseConstants.PRODUCT_QUANTITY_DESCRIPTION, example = ProductResponseConstants.PRODUCT_QUANTITY_EXAMPLE)
     private Integer productQuantity;
-    @Schema(description = "Price of the product", example = "1000")
+    @Schema(description = ProductResponseConstants.PRODUCT_PRICE_DESCRIPTION, example = ProductResponseConstants.PRODUCT_PRICE_EXAMPLE)
     private Double productPrice;
-    @Schema(description = "Brand details of the product")
+    @Schema(description = ProductResponseConstants.BRAND_DESCRIPTION)
     private BrandProductResponse brand;
-    @Schema(description = "List of categories associated with the product")
+    @Schema(description = ProductResponseConstants.CATEGORIES_DESCRIPTION)
     private List<CategoryProductResponse> categories;
-
 }
