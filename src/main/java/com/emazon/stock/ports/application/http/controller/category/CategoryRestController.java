@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,8 @@ public class CategoryRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_400_DESCRIPTION, content = @Content),
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_409, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_409_DESCRIPTION, content = @Content)
     })
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Void> saveCategory(
             @Parameter(description = CategoryRestControllerConstants.PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION, required = true)
