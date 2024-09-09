@@ -12,9 +12,8 @@ import com.emazon.stock.ports.application.http.mapper.brand.IBrandResponseMapper
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
 import com.emazon.stock.ports.application.http.mapper.product.IProductRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.product.IProductResponseMapper;
-import com.emazon.stock.ports.application.http.util.RolePermissionConstants;
+import com.emazon.stock.ports.application.http.util.openapi.ResponseCodeConstants;
 import com.emazon.stock.ports.application.http.util.openapi.controller.ProductRestControllerConstants;
-import com.emazon.stock.ports.persistence.mysql.util.openapi.ResponseCodeConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

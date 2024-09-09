@@ -1,5 +1,6 @@
 package com.emazon.stock.ports.application.http.dto.brand;
 
+import com.emazon.stock.ports.application.http.util.openapi.brand.BrandResponseConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -9,12 +10,14 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "Response DTO for Brand")
+@Schema(description = BrandResponseConstants.BRAND_RESPONSE_DESCRIPTION)
 public class BrandResponse implements Serializable {
-    @Schema(description = "ID of the brand", example = "1")
+    @Schema(description = BrandResponseConstants.BRAND_ID_DESCRIPTION, example = BrandResponseConstants.BRAND_ID_EXAMPLE)
     private Long brandId;
-    @Schema(description = "Name of the brand", example = "Samsung")
+
+    @Schema(description = BrandResponseConstants.BRAND_NAME_DESCRIPTION, example = BrandResponseConstants.BRAND_NAME_EXAMPLE)
     private String brandName;
-    @Schema(description = "Description of the brand", example = "Equipment manufacturer technology company")
+
+    @Schema(description = BrandResponseConstants.BRAND_DESCRIPTION_DESCRIPTION, example = BrandResponseConstants.BRAND_DESCRIPTION_EXAMPLE)
     private String brandDescription;
 }
