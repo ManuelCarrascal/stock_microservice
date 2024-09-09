@@ -1,5 +1,6 @@
 package com.emazon.stock.ports.persistence.mysql.entity;
 
+import com.emazon.stock.ports.persistence.mysql.util.BrandEntityConstants;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,23 +11,20 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = BrandEntity.TABLE_NAME)
-public class BrandEntity {
-    public static final String TABLE_NAME = "brand";
-    public static final String COLUMN_BRAND_ID = "brand_id";
-    public static final String COLUMN_BRAND_NAME = "brand_name";
-    public static final String COLUMN_BRAND_DESCRIPTION = "brand_description";
+@Table(name = BrandEntityConstants.TABLE_NAME)
+public class    BrandEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = COLUMN_BRAND_ID)
+    @Column(name = BrandEntityConstants.COLUMN_BRAND_ID)
     private Long brandId;
 
-    @Column(name= COLUMN_BRAND_NAME ,nullable = false, unique = true, length = 50)
+    @Column(name = BrandEntityConstants.COLUMN_BRAND_NAME, nullable = false, unique = true, length = BrandEntityConstants.LENGTH_BRAND_NAME)
     private String brandName;
 
-    @Column(name = COLUMN_BRAND_DESCRIPTION,nullable = false, length = 120)
+    @Column(name = BrandEntityConstants.COLUMN_BRAND_DESCRIPTION, nullable = false, length = BrandEntityConstants.LENGTH_BRAND_DESCRIPTION)
     private String brandDescription;
-    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = BrandEntityConstants.MAPPED_BY_BRAND, fetch = FetchType.LAZY)
     private List<ProductEntity> products;
 }

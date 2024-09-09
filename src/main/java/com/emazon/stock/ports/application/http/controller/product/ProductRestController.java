@@ -12,6 +12,9 @@ import com.emazon.stock.ports.application.http.mapper.brand.IBrandResponseMapper
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
 import com.emazon.stock.ports.application.http.mapper.product.IProductRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.product.IProductResponseMapper;
+import com.emazon.stock.ports.application.http.util.RolePermissionConstants;
+import com.emazon.stock.ports.application.http.util.openapi.controller.ProductRestControllerConstants;
+import com.emazon.stock.ports.persistence.mysql.util.openapi.ResponseCodeConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
-@Tag(name = "Product", description = "Product API")
+@Tag(name = ProductRestControllerConstants.TAG_NAME, description = ProductRestControllerConstants.TAG_DESCRIPTION)
 public class ProductRestController {
     private final IProductServicePort productServicePort;
     private final IProductRequestMapper productRequestMapper;
@@ -38,34 +42,36 @@ public class ProductRestController {
     private final ICategoryResponseMapper categoryResponseMapper;
     private final ICategoryServicePort categoryServicePort;
 
-    @Operation(summary = "Save a new product", description = "Creates a new product in the database")
+    @Operation(summary = ProductRestControllerConstants.SAVE_PRODUCT_SUMMARY, description = ProductRestControllerConstants.SAVE_PRODUCT_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Product created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input", content = @Content)
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_201_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_400_DESCRIPTION, content = @Content)
     })
+    @PreAuthorize(RolePermissionConstants.HAS_ROLE_ADMIN)
     @PostMapping
     public void saveProduct(
-            @Parameter(description = "Product request body", required = true)
+            @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_REQUEST_BODY_DESCRIPTION, required = true)
             @Valid
             @RequestBody ProductRequest productRequest
     ) {
         Product product = productRequestMapper.productRequestToProduct(productRequest);
         productServicePort.saveProduct(product);
     }
-    @Operation(summary = "Get all products paginated", description = "Retrieves a paginated list of products")
+
+    @Operation(summary = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_SUMMARY, description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Products retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters", content = @Content)
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_RESPONSE_200_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_RESPONSE_400_DESCRIPTION, content = @Content)
     })
     @GetMapping
     public ResponseEntity<Pagination<ProductResponse>> getAllProductsPaginated(
-            @Parameter(description = "Page number", example = "1")
+            @Parameter(description = ProductRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_PAGE_EXAMPLE)
             @RequestParam(defaultValue = "0", required = false) int page,
-            @Parameter(description = "Page size", example = "10")
+            @Parameter(description = ProductRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SIZE_EXAMPLE)
             @RequestParam(defaultValue = "1", required = false) int size,
-            @Parameter(description = "Sort by", example = "productName")
+            @Parameter(description = ProductRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
             @RequestParam(defaultValue = "productName", required = false) String sortBy,
-            @Parameter(description = "Sort order", example = "true")
+            @Parameter(description = ProductRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
             @RequestParam(defaultValue = "true", required = false) boolean isAscending
     ) {
         Pagination<Product> productPagination = productServicePort.getAllProductsPaginated(new PaginationUtil(size, page, sortBy, isAscending));

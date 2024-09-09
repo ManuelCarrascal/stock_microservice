@@ -8,6 +8,8 @@ import com.emazon.stock.ports.application.http.dto.brand.BrandRequest;
 import com.emazon.stock.ports.application.http.dto.brand.BrandResponse;
 import com.emazon.stock.ports.application.http.mapper.brand.IBrandRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.brand.IBrandResponseMapper;
+import com.emazon.stock.ports.application.http.util.openapi.controller.BrandRestControllerConstants;
+import com.emazon.stock.ports.persistence.mysql.util.openapi.ResponseCodeConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,41 +27,44 @@ import java.util.List;
 @RestController
 @RequestMapping("/brands")
 @RequiredArgsConstructor
-@Tag(name = "Brand", description = "Brand API")
+@Tag(name = BrandRestControllerConstants.TAG_NAME, description = BrandRestControllerConstants.TAG_DESCRIPTION)
 public class BrandRestController {
     private final IBrandServicePort brandServicePort;
     private final IBrandRequestMapper brandRequestMapper;
     private final IBrandResponseMapper brandResponseMapper;
 
-    @Operation(summary = "Save a new brand", description = "Creates a new brand in the database")
-    @ApiResponses(value={
-            @ApiResponse(responseCode = "201", description = "Brand created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input",content = @Content),
-            @ApiResponse(responseCode = "409", description = "Brand already exists", content = @Content)
+    @Operation(summary = BrandRestControllerConstants.SAVE_BRAND_SUMMARY, description = BrandRestControllerConstants.SAVE_BRAND_DESCRIPTION)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = BrandRestControllerConstants.SAVE_BRAND_RESPONSE_201_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = BrandRestControllerConstants.SAVE_BRAND_RESPONSE_400_DESCRIPTION, content = @Content),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_409, description = BrandRestControllerConstants.SAVE_BRAND_RESPONSE_409_DESCRIPTION, content = @Content)
     })
     @PostMapping
-    public ResponseEntity<Void> saveBrand(@Valid @RequestBody BrandRequest brandRequest) {
+    public ResponseEntity<Void> saveBrand(
+            @Parameter(description = BrandRestControllerConstants.PARAM_BRAND_REQUEST_BODY_DESCRIPTION, required = true)
+            @Valid @RequestBody BrandRequest brandRequest) {
         Brand brand = brandRequestMapper.brandRequestToBrand(brandRequest);
         brandServicePort.saveBrand(brand);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-    @Operation(summary = "Get all brands paginated", description = "Retrieves a paginated list of brands")
+
+    @Operation(summary = BrandRestControllerConstants.GET_ALL_BRANDS_PAGINATED_SUMMARY, description = BrandRestControllerConstants.GET_ALL_BRANDS_PAGINATED_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Brands retrieved successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters", content = @Content)
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = BrandRestControllerConstants.GET_ALL_BRANDS_PAGINATED_RESPONSE_200_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = BrandRestControllerConstants.GET_ALL_BRANDS_PAGINATED_RESPONSE_400_DESCRIPTION, content = @Content)
     })
     @GetMapping
     public ResponseEntity<Pagination<BrandResponse>> getAllBrandsPaginated(
-            @Parameter(description = "Page number", example = "1")
+            @Parameter(description = BrandRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = BrandRestControllerConstants.PARAM_PAGE_EXAMPLE)
             @RequestParam(defaultValue = "0", required = false) int page,
-            @Parameter(description = "Page size", example = "10")
+            @Parameter(description = BrandRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = BrandRestControllerConstants.PARAM_SIZE_EXAMPLE)
             @RequestParam(defaultValue = "1", required = false) int size,
-            @Parameter(description = "Category name filter", example = "categoryName")
-            @RequestParam(defaultValue = "brandName",required = false) String nameFilter,
-            @Parameter(description = "Sort order", example = "true")
-            @RequestParam(defaultValue = "true",required = false) boolean isAscending
-    ){
-        Pagination<Brand> brandPagination = brandServicePort.getAllBrandsPaginated(new PaginationUtil(size,page, nameFilter, isAscending));
+            @Parameter(description = BrandRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = BrandRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
+            @RequestParam(defaultValue = "brandName", required = false) String nameFilter,
+            @Parameter(description = BrandRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = BrandRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
+            @RequestParam(defaultValue = "true", required = false) boolean isAscending
+    ) {
+        Pagination<Brand> brandPagination = brandServicePort.getAllBrandsPaginated(new PaginationUtil(size, page, nameFilter, isAscending));
         List<Brand> brands = brandPagination.getContent();
 
         return ResponseEntity.ok(
