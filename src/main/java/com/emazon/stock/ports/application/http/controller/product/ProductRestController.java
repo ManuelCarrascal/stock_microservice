@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +46,7 @@ public class ProductRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_201_DESCRIPTION),
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_400_DESCRIPTION, content = @Content)
     })
+    @PreAuthorize(RolePermissionConstants.HAS_ROLE_ADMIN)
     @PostMapping
     public void saveProduct(
             @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_REQUEST_BODY_DESCRIPTION, required = true)

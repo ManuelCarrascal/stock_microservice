@@ -5,6 +5,7 @@ import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.spi.category.ICategoryPersistencePort;
+import com.emazon.stock.domain.util.EntityConstants;
 import com.emazon.stock.domain.util.PaginationUtil;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class CategoryUseCase implements ICategoryServicePort {
     @Override
     public void saveCategory(Category category) {
         if (categoryPersistencePort.categoryExistsByName(category.getCategoryName())) {
-            throw new EntityAlreadyExistsException("Category");
+            throw new EntityAlreadyExistsException(EntityConstants.CATEGORY_ENTITY_NAME.getName());
         }
         categoryPersistencePort.saveCategory(category);
     }

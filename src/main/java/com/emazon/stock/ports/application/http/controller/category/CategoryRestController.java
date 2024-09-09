@@ -42,7 +42,7 @@ public class CategoryRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_409, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_409_DESCRIPTION, content = @Content)
     })
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize(RolePermissionConstants.HAS_ROLE_ADMIN)
     @PostMapping
     public ResponseEntity<Void> saveCategory(
             @Parameter(description = CategoryRestControllerConstants.PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION, required = true)
