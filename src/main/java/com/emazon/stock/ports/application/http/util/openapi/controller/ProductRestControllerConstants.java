@@ -1,6 +1,10 @@
 package com.emazon.stock.ports.application.http.util.openapi.controller;
 
 public class ProductRestControllerConstants {
+    public static final String DEFAULT_PAGE = "0";
+    public static final String DEFAULT_SIZE = "1";
+    public static final String DEFAULT_SORT_BY = "productName";
+    public static final String DEFAULT_SORT_ORDER = "true";
     public static final String TAG_NAME = "Product";
     public static final String TAG_DESCRIPTION = "Product API";
     public static final String SAVE_PRODUCT_SUMMARY = "Save a new product";

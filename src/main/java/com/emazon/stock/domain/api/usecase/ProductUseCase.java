@@ -27,4 +27,9 @@ public class ProductUseCase implements IProductServicePort {
         return productPersistencePort.getAllProductsPaginated(paginationUtil);
     }
 
+    @Override
+    public void updateProduct(Product product) {
+        productPersistencePort.updateProduct(product);
+    }
+
 }

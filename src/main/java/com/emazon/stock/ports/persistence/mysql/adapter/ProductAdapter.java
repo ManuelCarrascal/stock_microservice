@@ -9,6 +9,7 @@ import com.emazon.stock.ports.persistence.mysql.entity.ProductEntity;
 import com.emazon.stock.ports.persistence.mysql.mapper.IProductEntityMapper;
 import com.emazon.stock.ports.persistence.mysql.repository.IProductRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,6 +55,16 @@ public class ProductAdapter implements IProductPersistencePort {
                 productPage.getTotalElements(),
                 products
         );
+    }
+
+    @Transactional
+    @Override
+    public void updateProduct(Product product) {
+        ProductEntity productEntity = productRepository.findById(product.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        productEntity.setProductQuantity(productEntity.getProductQuantity() + product.getProductQuantity());
+
+        productRepository.save(productEntity);
     }
 
 }

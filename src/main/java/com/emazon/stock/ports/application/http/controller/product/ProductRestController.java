@@ -6,6 +6,7 @@ import com.emazon.stock.domain.api.IProductServicePort;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.model.Product;
 import com.emazon.stock.domain.util.PaginationUtil;
+import com.emazon.stock.ports.application.http.dto.product.ProductQuantityRequest;
 import com.emazon.stock.ports.application.http.dto.product.ProductRequest;
 import com.emazon.stock.ports.application.http.dto.product.ProductResponse;
 import com.emazon.stock.ports.application.http.mapper.brand.IBrandResponseMapper;
@@ -63,13 +64,13 @@ public class ProductRestController {
     @GetMapping
     public ResponseEntity<Pagination<ProductResponse>> getAllProductsPaginated(
             @Parameter(description = ProductRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_PAGE_EXAMPLE)
-            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_PAGE, required = false) int page,
             @Parameter(description = ProductRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SIZE_EXAMPLE)
-            @RequestParam(defaultValue = "1", required = false) int size,
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SIZE, required = false) int size,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
-            @RequestParam(defaultValue = "productName", required = false) String sortBy,
+            @RequestParam(defaultValue =ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
-            @RequestParam(defaultValue = "true", required = false) boolean isAscending
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_ORDER, required = false) boolean isAscending
     ) {
         Pagination<Product> productPagination = productServicePort.getAllProductsPaginated(new PaginationUtil(size, page, sortBy, isAscending));
         List<Product> products = productPagination.getContent();
@@ -90,6 +91,17 @@ public class ProductRestController {
                         productPagination.getTotalElements(),
                         productResponses)
         );
+    }
+
+    @PatchMapping("/{productId}")
+    public void updateProduct(
+            @PathVariable Long productId,
+            @RequestBody ProductQuantityRequest productQuantityRequest
+            ) {
+        Product product = productRequestMapper.productQuantityRequestToProduct(productQuantityRequest);
+        product.setProductId(productId);
+        productServicePort.updateProduct(product);
+
     }
 
 }

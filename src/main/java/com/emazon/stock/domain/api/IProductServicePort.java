@@ -8,4 +8,5 @@ public interface IProductServicePort {
     void saveProduct(Product product);
     Pagination<Product> getAllProductsPaginated(PaginationUtil paginationUtil);
 
+    void updateProduct(Product product);
 }

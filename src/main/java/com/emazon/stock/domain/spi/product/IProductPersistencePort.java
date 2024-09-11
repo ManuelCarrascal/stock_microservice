@@ -7,4 +7,6 @@ import com.emazon.stock.domain.util.PaginationUtil;
 public interface IProductPersistencePort {
     void saveProduct(Product product);
     Pagination<Product> getAllProductsPaginated(PaginationUtil paginationUtil);
+
+    void updateProduct(Product product);
 }
