@@ -8,6 +8,7 @@ import com.emazon.stock.ports.application.http.dto.brand.BrandRequest;
 import com.emazon.stock.ports.application.http.dto.brand.BrandResponse;
 import com.emazon.stock.ports.application.http.mapper.brand.IBrandRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.brand.IBrandResponseMapper;
+import com.emazon.stock.ports.application.http.util.RolePermissionConstants;
 import com.emazon.stock.ports.application.http.util.openapi.ResponseCodeConstants;
 import com.emazon.stock.ports.application.http.util.openapi.controller.BrandRestControllerConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,6 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,6 +41,7 @@ public class BrandRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = BrandRestControllerConstants.SAVE_BRAND_RESPONSE_400_DESCRIPTION, content = @Content),
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_409, description = BrandRestControllerConstants.SAVE_BRAND_RESPONSE_409_DESCRIPTION, content = @Content)
     })
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE)
     @PostMapping
     public ResponseEntity<Void> saveBrand(
             @Parameter(description = BrandRestControllerConstants.PARAM_BRAND_REQUEST_BODY_DESCRIPTION, required = true)
