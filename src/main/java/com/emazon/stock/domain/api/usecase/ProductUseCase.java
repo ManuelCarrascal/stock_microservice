@@ -32,4 +32,9 @@ public class ProductUseCase implements IProductServicePort {
         productPersistencePort.updateProduct(product);
     }
 
+    @Override
+    public void getProductById(Long productId) {
+        productPersistencePort.getProductById(productId);
+    }
+
 }

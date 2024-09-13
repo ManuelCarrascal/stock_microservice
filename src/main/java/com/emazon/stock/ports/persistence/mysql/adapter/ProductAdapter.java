@@ -1,5 +1,6 @@
 package com.emazon.stock.ports.persistence.mysql.adapter;
 
+import com.emazon.stock.domain.exception.NotFoundException;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.model.Product;
 import com.emazon.stock.domain.spi.product.IProductPersistencePort;
@@ -9,6 +10,7 @@ import com.emazon.stock.ports.persistence.mysql.entity.ProductEntity;
 import com.emazon.stock.ports.persistence.mysql.mapper.IProductEntityMapper;
 import com.emazon.stock.ports.persistence.mysql.repository.IProductRepository;
 
+import com.emazon.stock.ports.persistence.mysql.util.ProductAdapterConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -61,10 +63,16 @@ public class ProductAdapter implements IProductPersistencePort {
     @Override
     public void updateProduct(Product product) {
         ProductEntity productEntity = productRepository.findById(product.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new NotFoundException(ProductAdapterConstants.PRODUCT_NOT_FOUND_MESSAGE));
         productEntity.setProductQuantity(productEntity.getProductQuantity() + product.getProductQuantity());
 
         productRepository.save(productEntity);
+    }
+
+    @Override
+    public void getProductById(Long productId) {
+        productEntityMapper.toProduct(productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException(ProductAdapterConstants.PRODUCT_NOT_FOUND_MESSAGE)));
     }
 
 }

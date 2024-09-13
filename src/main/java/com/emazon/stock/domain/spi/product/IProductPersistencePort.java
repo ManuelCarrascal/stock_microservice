@@ -9,4 +9,6 @@ public interface IProductPersistencePort {
     Pagination<Product> getAllProductsPaginated(PaginationUtil paginationUtil);
 
     void updateProduct(Product product);
+
+    void getProductById(Long productId);
 }

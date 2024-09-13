@@ -41,6 +41,7 @@ public class ProductRestController {
     private final ICategoryResponseMapper categoryResponseMapper;
     private final ICategoryServicePort categoryServicePort;
 
+
     @Operation(summary = ProductRestControllerConstants.SAVE_PRODUCT_SUMMARY, description = ProductRestControllerConstants.SAVE_PRODUCT_DESCRIPTION)
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_201_DESCRIPTION),
@@ -92,7 +93,6 @@ public class ProductRestController {
                         productResponses)
         );
     }
-
     @PatchMapping("/{productId}")
     public void updateProduct(
             @PathVariable Long productId,
@@ -101,6 +101,15 @@ public class ProductRestController {
         Product product = productRequestMapper.productQuantityRequestToProduct(productQuantityRequest);
         product.setProductId(productId);
         productServicePort.updateProduct(product);
+
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<Boolean> getProductById(
+            @PathVariable Long productId
+    ) {
+        productServicePort.getProductById(productId);
+        return ResponseEntity.ok(true);
 
     }
 
