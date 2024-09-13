@@ -26,7 +26,7 @@ public class HandlerControllerAdvisor {
         List<String> errors = ex.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
                 .toList();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", errors));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(HandlerControllerAdvisorConstants.MESSAGE_KEY, errors));
     }
 
     @ExceptionHandler(InvalidPageIndexException.class)
@@ -41,17 +41,17 @@ public class HandlerControllerAdvisor {
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     public ResponseEntity<String> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex) {
-        return new ResponseEntity<>("Error: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HandlerControllerAdvisorConstants.BODY_KEY_ERROR+ ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return new ResponseEntity<>("Error: " + Objects.requireNonNull(ex.getRootCause()).getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HandlerControllerAdvisorConstants.BODY_KEY_ERROR + Objects.requireNonNull(ex.getRootCause()).getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidSortByException.class)
     public ResponseEntity<Map<String, String>> handleInvalidSortByException(InvalidSortByException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("Error", ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(HandlerControllerAdvisorConstants.BODY_KEY_ERROR, ex.getMessage()));
     }
 
     @ExceptionHandler(NotFoundException.class)

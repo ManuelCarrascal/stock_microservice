@@ -25,7 +25,7 @@ public class JwtService {
     }
 
     public String extractRole(String jwt){
-        return extractAllClaims(jwt).get("authorities").toString();
+        return extractAllClaims(jwt).get(JwtServiceConstants.CLAIM_AUTHORITIES).toString();
     }
 
     private Claims extractAllClaims(String jwt) {
