@@ -8,6 +8,7 @@ import com.emazon.stock.ports.application.http.dto.category.CategoryRequest;
 import com.emazon.stock.ports.application.http.dto.category.CategoryResponse;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
+import com.emazon.stock.ports.application.http.util.RolePermissionConstants;
 import com.emazon.stock.ports.application.http.util.openapi.ResponseCodeConstants;
 import com.emazon.stock.ports.application.http.util.openapi.controller.CategoryRestControllerConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,7 +43,7 @@ public class CategoryRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_409, description = CategoryRestControllerConstants.SAVE_CATEGORY_RESPONSE_409_DESCRIPTION, content = @Content)
     })
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE)
     @PostMapping
     public ResponseEntity<Void> saveCategory(
             @Parameter(description = CategoryRestControllerConstants.PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION, required = true)

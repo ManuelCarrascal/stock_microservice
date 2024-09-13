@@ -13,6 +13,7 @@ import com.emazon.stock.ports.application.http.mapper.brand.IBrandResponseMapper
 import com.emazon.stock.ports.application.http.mapper.category.ICategoryResponseMapper;
 import com.emazon.stock.ports.application.http.mapper.product.IProductRequestMapper;
 import com.emazon.stock.ports.application.http.mapper.product.IProductResponseMapper;
+import com.emazon.stock.ports.application.http.util.RolePermissionConstants;
 import com.emazon.stock.ports.application.http.util.openapi.ResponseCodeConstants;
 import com.emazon.stock.ports.application.http.util.openapi.controller.ProductRestControllerConstants;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,6 +49,7 @@ public class ProductRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_201_DESCRIPTION),
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_400_DESCRIPTION, content = @Content)
     })
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE)
     @PostMapping
     public void saveProduct(
             @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_REQUEST_BODY_DESCRIPTION, required = true)
@@ -94,6 +97,7 @@ public class ProductRestController {
         );
     }
     @PatchMapping("/{productId}")
+    @PreAuthorize(RolePermissionConstants.AUX_BODEGA_ROLE)
     public void updateProduct(
             @PathVariable Long productId,
             @RequestBody ProductQuantityRequest productQuantityRequest
@@ -103,7 +107,7 @@ public class ProductRestController {
         productServicePort.updateProduct(product);
 
     }
-
+    @PreAuthorize(RolePermissionConstants.AUX_BODEGA_ROLE)
     @GetMapping("/{productId}")
     public ResponseEntity<Boolean> getProductById(
             @PathVariable Long productId
