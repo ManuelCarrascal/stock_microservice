@@ -34,15 +34,6 @@ public interface IProductRepository extends JpaRepository<ProductEntity,Long> {
     @Query(QueriesConstants.FIND_STOCK_QUANTITY_PRODUCT)
     Long findStockQuantityProduct(Long productId);
 
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids")
-    Page<ProductEntity> findByIdIn(List<Long> ids, Pageable pageable);
-
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY p.productName ASC")
-    Page<ProductEntity> findByIdInOrderByProductNameAsc(List<Long> ids, Pageable pageable);
-
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY p.productName DESC")
-    Page<ProductEntity> findByIdInOrderByProductNameDesc(List<Long> ids, Pageable pageable);
-
     @Query ("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ")
     Page<ProductEntity> findByIds(List<Long> ids, Pageable pageable);
 
