@@ -24,6 +24,22 @@ public class ProductRestControllerConstants {
     public static final String PARAM_SORT_ORDER_DESCRIPTION = "Sort order";
     public static final String PARAM_SORT_ORDER_EXAMPLE = "true";
     public static final String PARAM_PRODUCT_REQUEST_BODY_DESCRIPTION = "Product request body";
+
+    public static final String GET_PRODUCT_BY_ID_SUMMARY = "Get product by ID";
+    public static final String GET_PRODUCT_BY_ID_DESCRIPTION = "Endpoint to get a product by its ID";
+    public static final String GET_PRODUCT_BY_ID_RESPONSE_200_DESCRIPTION = "Product retrieved successfully";
+    public static final String GET_PRODUCT_BY_ID_RESPONSE_404_DESCRIPTION = "Product not found";
+
+    public static final String PARAM_PRODUCT_ID_DESCRIPTION = "ID of the product";
+    public static final String PARAM_PRODUCT_QUANTITY_REQUEST_BODY_DESCRIPTION = "Product quantity request body";
+
+
+    public static final String UPDATE_PRODUCT_SUMMARY = "Update product quantity";
+    public static final String UPDATE_PRODUCT_DESCRIPTION = "Endpoint to update the quantity of a product";
+    public static final String UPDATE_PRODUCT_RESPONSE_200_DESCRIPTION = "Product updated successfully";
+    public static final String UPDATE_PRODUCT_RESPONSE_400_DESCRIPTION = "Invalid request";
+    public static final String UPDATE_PRODUCT_RESPONSE_404_DESCRIPTION = "Product not found";
+
     private ProductRestControllerConstants() {
     }
 }

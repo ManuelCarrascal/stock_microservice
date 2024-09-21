@@ -11,4 +11,5 @@ public interface ICategoryServicePort {
     Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil);
     List<Category> getAllByProduct(Long idProduct);
 
+    List<String> getCategoryNamesByProductId(Long productId);
 }

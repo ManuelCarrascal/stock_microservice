@@ -6,6 +6,7 @@ import com.emazon.stock.domain.api.IProductServicePort;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.model.Product;
 import com.emazon.stock.domain.util.PaginationUtil;
+import com.emazon.stock.ports.application.http.dto.product.ProductCartRequest;
 import com.emazon.stock.ports.application.http.dto.product.ProductQuantityRequest;
 import com.emazon.stock.ports.application.http.dto.product.ProductRequest;
 import com.emazon.stock.ports.application.http.dto.product.ProductResponse;
@@ -46,8 +47,14 @@ public class ProductRestController {
 
     @Operation(summary = ProductRestControllerConstants.SAVE_PRODUCT_SUMMARY, description = ProductRestControllerConstants.SAVE_PRODUCT_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_201, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_201_DESCRIPTION),
-            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_400_DESCRIPTION, content = @Content)
+            @ApiResponse(
+                    responseCode = ResponseCodeConstants.RESPONSE_CODE_201,
+                    description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_201_DESCRIPTION
+            ),
+            @ApiResponse(
+                    responseCode = ResponseCodeConstants.RESPONSE_CODE_400,
+                    description = ProductRestControllerConstants.SAVE_PRODUCT_RESPONSE_400_DESCRIPTION, content = @Content
+            )
     })
     @PreAuthorize(RolePermissionConstants.ADMIN_ROLE)
     @PostMapping
@@ -62,8 +69,15 @@ public class ProductRestController {
 
     @Operation(summary = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_SUMMARY, description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_DESCRIPTION)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_RESPONSE_200_DESCRIPTION),
-            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_RESPONSE_400_DESCRIPTION, content = @Content)
+            @ApiResponse(
+                    responseCode = ResponseCodeConstants.RESPONSE_CODE_200,
+                    description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_RESPONSE_200_DESCRIPTION
+            ),
+            @ApiResponse(
+                    responseCode = ResponseCodeConstants.RESPONSE_CODE_400,
+                    description = ProductRestControllerConstants.GET_ALL_PRODUCTS_PAGINATED_RESPONSE_400_DESCRIPTION,
+                    content = @Content
+            )
     })
     @GetMapping
     public ResponseEntity<Pagination<ProductResponse>> getAllProductsPaginated(
@@ -96,10 +110,19 @@ public class ProductRestController {
                         productResponses)
         );
     }
+
+    @Operation(summary = ProductRestControllerConstants.UPDATE_PRODUCT_SUMMARY, description = ProductRestControllerConstants.UPDATE_PRODUCT_DESCRIPTION)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = ProductRestControllerConstants.UPDATE_PRODUCT_RESPONSE_200_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = ProductRestControllerConstants.UPDATE_PRODUCT_RESPONSE_400_DESCRIPTION, content = @Content),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_404, description = ProductRestControllerConstants.UPDATE_PRODUCT_RESPONSE_404_DESCRIPTION, content = @Content)
+    })
     @PatchMapping("/{productId}")
     @PreAuthorize(RolePermissionConstants.AUX_BODEGA_ROLE)
     public void updateProduct(
+            @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_ID_DESCRIPTION, required = true)
             @PathVariable Long productId,
+            @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_QUANTITY_REQUEST_BODY_DESCRIPTION, required = true)
             @RequestBody ProductQuantityRequest productQuantityRequest
             ) {
         Product product = productRequestMapper.productQuantityRequestToProduct(productQuantityRequest);
@@ -107,14 +130,64 @@ public class ProductRestController {
         productServicePort.updateProduct(product);
 
     }
-    @PreAuthorize(RolePermissionConstants.AUX_BODEGA_ROLE)
+    @Operation(summary = ProductRestControllerConstants.GET_PRODUCT_BY_ID_SUMMARY, description = ProductRestControllerConstants.GET_PRODUCT_BY_ID_DESCRIPTION)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = ProductRestControllerConstants.GET_PRODUCT_BY_ID_RESPONSE_200_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_404, description = ProductRestControllerConstants.GET_PRODUCT_BY_ID_RESPONSE_404_DESCRIPTION, content = @Content)
+    })
+    @PreAuthorize(RolePermissionConstants.AUX_BODEGA_ROLE + " or " + RolePermissionConstants.CLIENTE_ROLE)
     @GetMapping("/{productId}")
     public ResponseEntity<Boolean> getProductById(
+            @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_ID_DESCRIPTION, required = true)
             @PathVariable Long productId
     ) {
         productServicePort.getProductById(productId);
         return ResponseEntity.ok(true);
 
+    }
+
+    @GetMapping("/stock/{productId}/{productQuantity}")
+    public ResponseEntity<Boolean> isStockSufficient(
+            @PathVariable Long productId,
+            @PathVariable Integer productQuantity
+    ) {
+        return ResponseEntity.ok(productServicePort.isStockSufficient(productId, productQuantity));
+    }
+
+    @GetMapping("/products-cart")
+    public ResponseEntity<Pagination<ProductResponse>> getAllProductsPaginatedByIds(
+            @Parameter(description = ProductRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_PAGE_EXAMPLE)
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_PAGE, required = false) int page,
+            @Parameter(description = ProductRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SIZE_EXAMPLE)
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SIZE, required = false) int size,
+            @Parameter(description = ProductRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
+            @RequestParam(defaultValue =ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @Parameter(description = ProductRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_ORDER, required = false) boolean isAscending,
+            @RequestBody ProductCartRequest productCartRequest
+    ) {
+        Pagination<Product> productPagination = productServicePort.getAllProductsPaginatedByIds(
+                new PaginationUtil(size, page, sortBy, isAscending),
+                productCartRequest.getProductIds()
+        );
+        List<Product> products = productPagination.getContent();
+        List<ProductResponse> productResponses = products.stream().map(
+                product -> {
+                    ProductResponse productResponse = productResponseMapper.productToProductResponse(product);
+                    productResponse.setBrand(brandResponseMapper.brandToBrandProductResponse(brandServicePort.brandGetById(product.getBrandId())));
+                    productResponse.setCategories(categoryResponseMapper.categoriesToCategoryProductResponses(categoryServicePort.getAllByProduct(product.getProductId())));
+                    return productResponse;
+                }
+
+        ).toList();
+        return ResponseEntity.ok(
+                new Pagination<>(
+                        productPagination.isAscending(),
+                        productPagination.getCurrentPage(),
+                        productPagination.getTotalPages(),
+                        productPagination.getTotalElements(),
+                        productResponses)
+        );
     }
 
 }

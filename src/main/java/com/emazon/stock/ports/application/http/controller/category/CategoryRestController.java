@@ -61,13 +61,13 @@ public class CategoryRestController {
     @GetMapping
     public ResponseEntity<Pagination<CategoryResponse>> getAllCategoriesPaginated(
             @Parameter(description = CategoryRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_PAGE_EXAMPLE)
-            @RequestParam(defaultValue = "0", required = false) int page,
+            @RequestParam(defaultValue = CategoryRestControllerConstants.DEFAULT_PAGE, required = false) int page,
             @Parameter(description = CategoryRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_SIZE_EXAMPLE)
-            @RequestParam(defaultValue = "1", required = false) int size,
+            @RequestParam(defaultValue = CategoryRestControllerConstants.DEFAULT_SIZE, required = false) int size,
             @Parameter(description = CategoryRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
-            @RequestParam(defaultValue = "categoryName", required = false) String sortBy,
+            @RequestParam(defaultValue = CategoryRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @Parameter(description = CategoryRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
-            @RequestParam(defaultValue = "true", required = false) boolean isAscending
+            @RequestParam(defaultValue = CategoryRestControllerConstants.DEFAULT_SORT_ORDER, required = false) boolean isAscending
     ) {
         Pagination<Category> categoryPagination = categoryServicePort.getAllCategoriesPaginated(new PaginationUtil(size, page, sortBy, isAscending));
         List<Category> categories = categoryPagination.getContent();
@@ -81,5 +81,17 @@ public class CategoryRestController {
                         categoryResponseMapper.categoriesToCategoryResponses(categories)
                 )
         );
+    }
+    @Operation(summary = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_SUMMARY, description = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_DESCRIPTION)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_RESPONSE_200_DESCRIPTION),
+            @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_RESPONSE_400_DESCRIPTION, content = @Content)
+    })
+    @GetMapping("/{productId}/category-names")
+    public ResponseEntity<List<String>> getCategoryNamesByProductId(
+            @Parameter(description = CategoryRestControllerConstants.PARAM_PRODUCT_ID_DESCRIPTION, required = true)
+            @PathVariable Long productId) {
+        List<String> categoryNames = categoryServicePort.getCategoryNamesByProductId(productId);
+        return ResponseEntity.ok(categoryNames);
     }
 }

@@ -50,4 +50,9 @@ public class CategoryAdapter implements ICategoryPersistencePort {
         return categoryEntityMapper.toCategoryList(categories);
     }
 
-   }
+    @Override
+    public List<String> findCategoryNamesByProductId(Long productId) {
+        return categoryRepository.findCategoryNamesByProductId(productId);
+    }
+
+}

@@ -22,6 +22,16 @@ public class CategoryRestControllerConstants {
     public static final String PARAM_SORT_ORDER_EXAMPLE = "true";
     public static final String PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION = "Category request body";
 
+    public static final String DEFAULT_PAGE = "0";
+    public static final String DEFAULT_SIZE = "1";
+    public static final String DEFAULT_SORT_BY = "categoryName";
+    public static final String DEFAULT_SORT_ORDER = "true";
+
+    public static final String GET_CATEGORY_NAMES_BY_PRODUCT_ID_SUMMARY = "Get category names by product ID";
+    public static final String GET_CATEGORY_NAMES_BY_PRODUCT_ID_DESCRIPTION = "Retrieves a list of category names associated with a given product ID";
+    public static final String GET_CATEGORY_NAMES_BY_PRODUCT_ID_RESPONSE_200_DESCRIPTION = "Category names retrieved successfully";
+    public static final String GET_CATEGORY_NAMES_BY_PRODUCT_ID_RESPONSE_400_DESCRIPTION = "Invalid product ID";
+    public static final String PARAM_PRODUCT_ID_DESCRIPTION = "ID of the product";
     private CategoryRestControllerConstants() {
     }
 }
