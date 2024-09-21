@@ -3,6 +3,7 @@ package com.emazon.stock.infrastructure.configuration.exceptionhandler;
 import com.emazon.stock.domain.exception.InvalidPageIndexException;
 import com.emazon.stock.domain.exception.InvalidSortByException;
 import com.emazon.stock.domain.exception.NotFoundException;
+import com.emazon.stock.infrastructure.configuration.util.HandlerControllerAdvisorConstants;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;

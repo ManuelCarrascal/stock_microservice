@@ -45,9 +45,9 @@ public class ProductUseCase implements IProductServicePort {
     }
 
     @Override
-    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil,List<Long> productIds) {
+    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds, String categoryName, String brandName) {
         PaginationValidator.validate(paginationUtil);
-        return productPersistencePort.getAllProductsPaginatedByIds(paginationUtil,productIds);
-    }
 
+        return productPersistencePort.getAllProductsPaginatedByIds(paginationUtil,productIds,categoryName,brandName);
+    }
 }

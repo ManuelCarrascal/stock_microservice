@@ -81,23 +81,24 @@ public class ProductAdapter implements IProductPersistencePort {
     }
 
     @Override
-    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds) {
+    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds, String categoryName, String brandName) {
+
         PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize());
-        Page<ProductEntity> productPage = productRepository.findByIdIn(productIds, pageRequest);
-        if (SortBy.BRAND_NAME.getFieldName().equals(paginationUtil.getSortBy())) {
-            productPage = paginationUtil.isAscending()
-                    ? productRepository.findByIdInOrderByBrandNameAsc(productIds, pageRequest)
-                    : productRepository.findByIdInOrderByBrandNameDesc(productIds, pageRequest);
-        } else if (SortBy.NUMBER_OF_CATEGORIES.getFieldName().equals(paginationUtil.getSortBy())) {
-            productPage = paginationUtil.isAscending()
-                    ? productRepository.findByIdInOrderByNumberOfCategoriesAsc(productIds, pageRequest)
-                    : productRepository.findByIdInOrderByNumberOfCategoriesDesc(productIds, pageRequest);
-        } else if (SortBy.PRODUCT_NAME.getFieldName().equals(paginationUtil.getSortBy())) {
-            productPage = paginationUtil.isAscending()
-                    ? productRepository.findByIdInOrderByProductNameAsc(productIds, pageRequest)
-                    : productRepository.findByIdInOrderByProductNameDesc(productIds, pageRequest);
+        Page<ProductEntity> productPage;
+        categoryName = categoryName == null ? null: "%"+categoryName+"%";
+        brandName = brandName == null ? null: "%"+brandName+"%";
+
+        if (categoryName != null && brandName != null) {
+            productPage = productRepository.findByBrandNameAndCategoryNameAndIds(brandName, categoryName, productIds, pageRequest);
+        } else if (categoryName != null) {
+            productPage = productRepository.findByCategoryAndIds(categoryName, productIds, pageRequest);
+        } else if (brandName != null) {
+            productPage = productRepository.findByBrandNameAndIds(brandName, productIds, pageRequest);
+        } else {
+            productPage = productRepository.findByIdIn(productIds, pageRequest);
         }
-        List<Product> products = productEntityMapper.toProductList(productPage.getContent());
+
+       List<Product> products = productEntityMapper.toProductList(productPage.getContent());
 
         return new Pagination<>(
                 paginationUtil.isAscending(),
@@ -106,5 +107,8 @@ public class ProductAdapter implements IProductPersistencePort {
                 productPage.getTotalElements(),
                 products
         );
+
     }
+
+
 }

@@ -164,11 +164,15 @@ public class ProductRestController {
             @RequestParam(defaultValue =ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
             @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_ORDER, required = false) boolean isAscending,
-            @RequestBody ProductCartRequest productCartRequest
+            @RequestBody ProductCartRequest productCartRequest,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String brandName
     ) {
         Pagination<Product> productPagination = productServicePort.getAllProductsPaginatedByIds(
                 new PaginationUtil(size, page, sortBy, isAscending),
-                productCartRequest.getProductIds()
+                productCartRequest.getProductIds(),
+                categoryName,
+                brandName
         );
         List<Product> products = productPagination.getContent();
         List<ProductResponse> productResponses = products.stream().map(

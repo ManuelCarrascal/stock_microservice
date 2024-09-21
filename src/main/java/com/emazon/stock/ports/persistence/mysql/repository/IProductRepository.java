@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 
@@ -41,17 +43,16 @@ public interface IProductRepository extends JpaRepository<ProductEntity,Long> {
     @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY p.productName DESC")
     Page<ProductEntity> findByIdInOrderByProductNameDesc(List<Long> ids, Pageable pageable);
 
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY p.brand.brandName ASC")
-    Page<ProductEntity> findByIdInOrderByBrandNameAsc(List<Long> ids, Pageable pageable);
+    @Query ("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ")
+    Page<ProductEntity> findByIds(List<Long> ids, Pageable pageable);
 
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY p.brand.brandName DESC")
-    Page<ProductEntity> findByIdInOrderByBrandNameDesc(List<Long> ids, Pageable pageable);
+    @Query( "SELECT p FROM ProductEntity  p WHERE p.brand.brandName LIKE :brandName AND p.productId IN :ids")
+    Page<ProductEntity> findByBrandNameAndIds(@Param("brandName") String brandName, @Param("ids") List<Long> ids, Pageable pageable);
 
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY size(p.categories) ASC")
-    Page<ProductEntity> findByIdInOrderByNumberOfCategoriesAsc(List<Long> ids, Pageable pageable);
+    @Query("SELECT p FROM ProductEntity p JOIN p.categories c WHERE c.categoryName LIKE :categoryName AND p.productId IN :ids")
+    Page<ProductEntity> findByCategoryAndIds(@Param("categoryName") String categoryName, @Param("ids") List<Long> ids, Pageable pageable);
 
-    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ORDER BY size(p.categories) DESC")
-    Page<ProductEntity> findByIdInOrderByNumberOfCategoriesDesc(List<Long> ids, Pageable pageable);
-
+    @Query("SELECT p FROM ProductEntity p JOIN p.brand b JOIN p.categories c WHERE b.brandName LIKE :brandName AND c.categoryName LIKE :categoryName AND p.productId IN :ids")
+    Page<ProductEntity> findByBrandNameAndCategoryNameAndIds(@Param("brandName") String brandName, @Param("categoryName") String categoryName, @Param("ids") List<Long> ids, Pageable pageable);
 
 }
