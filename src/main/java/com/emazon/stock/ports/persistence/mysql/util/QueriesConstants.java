@@ -9,6 +9,8 @@ public class QueriesConstants {
     public static final String FIND_ALL_ORDER_BY_BRAND_NAME_DESC = "SELECT p FROM ProductEntity p JOIN p.brand b ORDER BY b.brandName DESC";
     public static final String FIND_ALL_ORDER_BY_NUMBER_OF_CATEGORIES_ASC = "SELECT p FROM ProductEntity p LEFT JOIN p.categories c " + "GROUP BY p.productId " + "ORDER BY COUNT(c.categoryId) ASC, MIN(c.categoryName) ASC";
     public static final String FIND_ALL_ORDER_BY_NUMBER_OF_CATEGORIES_DESC = "SELECT p FROM ProductEntity p LEFT JOIN p.categories c " + "GROUP BY p.productId " + "ORDER BY COUNT(c.categoryId) DESC, MIN(c.categoryName) ASC";
+    public static final String FIND_CATEGORY_NAMES_BY_PRODUCT_ID = "SELECT c.categoryName FROM CategoryEntity c JOIN c.products p WHERE p.productId = :productId";
+    public static final String FIND_STOCK_QUANTITY_PRODUCT = "SELECT p.productQuantity FROM ProductEntity p WHERE p.productId = :productId";
 
     private QueriesConstants() {
     }

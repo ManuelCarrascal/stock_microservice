@@ -7,6 +7,8 @@ import com.emazon.stock.domain.spi.product.IProductPersistencePort;
 import com.emazon.stock.domain.util.PaginationUtil;
 import com.emazon.stock.domain.util.PaginationValidator;
 
+import java.util.List;
+
 
 public class ProductUseCase implements IProductServicePort {
 
@@ -35,6 +37,17 @@ public class ProductUseCase implements IProductServicePort {
     @Override
     public void getProductById(Long productId) {
         productPersistencePort.getProductById(productId);
+    }
+
+    @Override
+    public boolean isStockSufficient( Long productId, Integer quantity) {
+        return  productPersistencePort.isStockSufficient(productId, quantity);
+    }
+
+    @Override
+    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil,List<Long> productIds) {
+        PaginationValidator.validate(paginationUtil);
+        return productPersistencePort.getAllProductsPaginatedByIds(paginationUtil,productIds);
     }
 
 }

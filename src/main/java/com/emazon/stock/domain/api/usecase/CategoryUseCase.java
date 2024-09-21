@@ -37,5 +37,10 @@ public class CategoryUseCase implements ICategoryServicePort {
         return categoryPersistencePort.getAllByProduct(idProduct);
     }
 
+    @Override
+    public List<String> getCategoryNamesByProductId(Long productId) {
+        return categoryPersistencePort.findCategoryNamesByProductId(productId);
+
+    }
 
 }
