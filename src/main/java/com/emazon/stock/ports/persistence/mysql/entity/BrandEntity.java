@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = BrandEntityConstants.TABLE_NAME)
+
 public class BrandEntity {
 
     @Id

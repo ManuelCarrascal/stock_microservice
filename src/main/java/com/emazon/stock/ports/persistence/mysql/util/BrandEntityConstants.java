@@ -11,4 +11,5 @@ public class BrandEntityConstants {
 
     private BrandEntityConstants() {
     }
+
 }
