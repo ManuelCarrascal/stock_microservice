@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -82,11 +83,15 @@ public class ProductAdapter implements IProductPersistencePort {
 
     @Override
     public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds, String categoryName, String brandName) {
+        PageRequest pageRequest = PageRequest.of(
+                paginationUtil.getPageNumber(),
+                paginationUtil.getPageSize(),
+                paginationUtil.isAscending() ? Sort.by("productName").ascending() : Sort.by("productName").descending()
+        );
 
-        PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize());
         Page<ProductEntity> productPage;
-        categoryName = categoryName == null ? null: "%"+categoryName+"%";
-        brandName = brandName == null ? null: "%"+brandName+"%";
+        categoryName = categoryName == null ? null : "%" + categoryName + "%";
+        brandName = brandName == null ? null : "%" + brandName + "%";
 
         if (categoryName != null && brandName != null) {
             productPage = productRepository.findByBrandNameAndCategoryNameAndIds(brandName, categoryName, productIds, pageRequest);
@@ -95,11 +100,10 @@ public class ProductAdapter implements IProductPersistencePort {
         } else if (brandName != null) {
             productPage = productRepository.findByBrandNameAndIds(brandName, productIds, pageRequest);
         } else {
-            productPage = productRepository.findByIdIn(productIds, pageRequest);
+            productPage = productRepository.findByIds(productIds, pageRequest);
         }
 
-       List<Product> products = productEntityMapper.toProductList(productPage.getContent());
-
+        List<Product> products = productEntityMapper.toProductList(productPage.getContent());
         return new Pagination<>(
                 paginationUtil.isAscending(),
                 paginationUtil.getPageNumber(),
@@ -107,7 +111,6 @@ public class ProductAdapter implements IProductPersistencePort {
                 productPage.getTotalElements(),
                 products
         );
-
     }
 
 
