@@ -8,6 +8,8 @@ import com.emazon.stock.domain.spi.brand.IBrandPersistencePort;
 import com.emazon.stock.domain.util.EntityConstants;
 import com.emazon.stock.domain.util.PaginationUtil;
 
+import java.util.List;
+
 public class BrandUseCase implements IBrandServicePort {
 
     private final IBrandPersistencePort brandPersistencePort;
@@ -31,5 +33,10 @@ public class BrandUseCase implements IBrandServicePort {
     @Override
     public Brand brandGetById(Long brandId) {
         return  brandPersistencePort.brandGetById(brandId);
+    }
+
+    @Override
+    public List<Brand> getAllBrands() {
+        return brandPersistencePort.getAllBrands();
     }
 }

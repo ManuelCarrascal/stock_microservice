@@ -34,6 +34,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "${cors.allowed.origins}")
 @Tag(name = ProductRestControllerConstants.TAG_NAME, description = ProductRestControllerConstants.TAG_DESCRIPTION)
 public class ProductRestController {
     private final IProductServicePort productServicePort;
@@ -86,29 +87,12 @@ public class ProductRestController {
             @Parameter(description = ProductRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SIZE_EXAMPLE)
             @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SIZE, required = false) int size,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
-            @RequestParam(defaultValue =ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
             @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_ORDER, required = false) boolean isAscending
     ) {
         Pagination<Product> productPagination = productServicePort.getAllProductsPaginated(new PaginationUtil(size, page, sortBy, isAscending));
-        List<Product> products = productPagination.getContent();
-        List<ProductResponse> productResponses = products.stream().map(
-                product -> {
-                    ProductResponse productResponse = productResponseMapper.productToProductResponse(product);
-                    productResponse.setBrand(brandResponseMapper.brandToBrandProductResponse(brandServicePort.brandGetById(product.getBrandId())));
-                    productResponse.setCategories(categoryResponseMapper.categoriesToCategoryProductResponses(categoryServicePort.getAllByProduct(product.getProductId())));
-                    return productResponse;
-                }
-
-        ).toList();
-        return ResponseEntity.ok(
-                new Pagination<>(
-                        productPagination.isAscending(),
-                        productPagination.getCurrentPage(),
-                        productPagination.getTotalPages(),
-                        productPagination.getTotalElements(),
-                        productResponses)
-        );
+        return getPaginationResponseEntity(productPagination);
     }
 
     @Operation(summary = ProductRestControllerConstants.UPDATE_PRODUCT_SUMMARY, description = ProductRestControllerConstants.UPDATE_PRODUCT_DESCRIPTION)
@@ -124,12 +108,13 @@ public class ProductRestController {
             @PathVariable Long productId,
             @Parameter(description = ProductRestControllerConstants.PARAM_PRODUCT_QUANTITY_REQUEST_BODY_DESCRIPTION, required = true)
             @RequestBody ProductQuantityRequest productQuantityRequest
-            ) {
+    ) {
         Product product = productRequestMapper.productQuantityRequestToProduct(productQuantityRequest);
         product.setProductId(productId);
         productServicePort.updateProduct(product);
 
     }
+
     @Operation(summary = ProductRestControllerConstants.GET_PRODUCT_BY_ID_SUMMARY, description = ProductRestControllerConstants.GET_PRODUCT_BY_ID_DESCRIPTION)
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = ProductRestControllerConstants.GET_PRODUCT_BY_ID_RESPONSE_200_DESCRIPTION),
@@ -146,6 +131,7 @@ public class ProductRestController {
 
     }
 
+    @PreAuthorize(RolePermissionConstants.CLIENTE_ROLE)
     @GetMapping("/stock/{productId}/{productQuantity}")
     public ResponseEntity<Boolean> isStockSufficient(
             @PathVariable Long productId,
@@ -154,6 +140,7 @@ public class ProductRestController {
         return ResponseEntity.ok(productServicePort.isStockSufficient(productId, productQuantity));
     }
 
+    @PreAuthorize(RolePermissionConstants.CLIENTE_ROLE)
     @GetMapping("/products-cart")
     public ResponseEntity<Pagination<ProductResponse>> getAllProductsPaginatedByIds(
             @Parameter(description = ProductRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_PAGE_EXAMPLE)
@@ -161,7 +148,7 @@ public class ProductRestController {
             @Parameter(description = ProductRestControllerConstants.PARAM_SIZE_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SIZE_EXAMPLE)
             @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SIZE, required = false) int size,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_BY_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_BY_EXAMPLE)
-            @RequestParam(defaultValue =ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_BY, required = false) String sortBy,
             @Parameter(description = ProductRestControllerConstants.PARAM_SORT_ORDER_DESCRIPTION, example = ProductRestControllerConstants.PARAM_SORT_ORDER_EXAMPLE)
             @RequestParam(defaultValue = ProductRestControllerConstants.DEFAULT_SORT_ORDER, required = false) boolean isAscending,
             @RequestBody ProductCartRequest productCartRequest,
@@ -174,16 +161,13 @@ public class ProductRestController {
                 categoryName,
                 brandName
         );
-        List<Product> products = productPagination.getContent();
-        List<ProductResponse> productResponses = products.stream().map(
-                product -> {
-                    ProductResponse productResponse = productResponseMapper.productToProductResponse(product);
-                    productResponse.setBrand(brandResponseMapper.brandToBrandProductResponse(brandServicePort.brandGetById(product.getBrandId())));
-                    productResponse.setCategories(categoryResponseMapper.categoriesToCategoryProductResponses(categoryServicePort.getAllByProduct(product.getProductId())));
-                    return productResponse;
-                }
+        return getPaginationResponseEntity(productPagination);
+    }
 
-        ).toList();
+    private ResponseEntity<Pagination<ProductResponse>> getPaginationResponseEntity(Pagination<Product> productPagination) {
+        List<Product> products = productPagination.getContent();
+
+        List<ProductResponse> productResponses= mapProducts(products);
         return ResponseEntity.ok(
                 new Pagination<>(
                         productPagination.isAscending(),
@@ -194,4 +178,41 @@ public class ProductRestController {
         );
     }
 
+    private List<ProductResponse> mapProducts(List<Product> products) {
+        return products.stream().map(
+                product -> {
+                    ProductResponse productResponse = productResponseMapper.productToProductResponse(product);
+                    productResponse.setBrand(brandResponseMapper.brandToBrandProductResponse(brandServicePort.brandGetById(product.getBrandId())));
+                    productResponse.setCategories(categoryResponseMapper.categoriesToCategoryProductResponses(categoryServicePort.getAllByProduct(product.getProductId())));
+                    return productResponse;
+                }
+
+        ).toList();
+
+    }
+    @PreAuthorize(RolePermissionConstants.CLIENTE_ROLE)
+    @GetMapping("/{productId}/price")
+    public ResponseEntity<Double> getProductPriceById(
+            @PathVariable Long productId
+    ) {
+        double price = productServicePort.getProductPriceById(productId);
+        return ResponseEntity.ok(price);
+    }
+    @PreAuthorize(RolePermissionConstants.CLIENTE_ROLE)
+    @GetMapping("/get-all")
+    public ResponseEntity<List<ProductResponse>> getAllProducts(@RequestBody ProductCartRequest productCartRequest) {
+        List<Long> productIds = productCartRequest.getProductIds();
+        List<Product> products = productServicePort.getAllProducts(productIds);
+        return ResponseEntity.ok(mapProducts(products));
+    }
+    @PreAuthorize(RolePermissionConstants.CLIENTE_ROLE)
+    @PatchMapping("/stock/{productId}/reduce")
+    public void reduceProductStock(
+            @PathVariable Long productId,
+            @RequestBody ProductQuantityRequest productQuantityRequest
+    ) {
+        Product product = productRequestMapper.productQuantityRequestToProduct(productQuantityRequest);
+        product.setProductId(productId);
+        productServicePort.reduceProductQuantity(product);
+    }
 }

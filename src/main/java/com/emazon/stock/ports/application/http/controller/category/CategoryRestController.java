@@ -29,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "${cors.allowed.origins}")
 @Tag(name = CategoryRestControllerConstants.TAG_NAME, description = CategoryRestControllerConstants.TAG_DESCRIPTION)
 public class CategoryRestController {
 
@@ -45,12 +46,14 @@ public class CategoryRestController {
 
     @PreAuthorize(RolePermissionConstants.ADMIN_ROLE)
     @PostMapping
-    public ResponseEntity<Void> saveCategory(
+    public ResponseEntity<CategoryResponse> saveCategory(
             @Parameter(description = CategoryRestControllerConstants.PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION, required = true)
             @Valid @RequestBody CategoryRequest categoryRequest) {
         Category category = categoryRequestMapper.categoryRequestToCategory(categoryRequest);
         categoryServicePort.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        CategoryResponse categoryResponse = categoryResponseMapper.categoryToCategoryResponse(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(categoryResponse);
+
     }
 
     @Operation(summary = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_SUMMARY, description = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_DESCRIPTION)
@@ -58,6 +61,7 @@ public class CategoryRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_RESPONSE_200_DESCRIPTION),
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = CategoryRestControllerConstants.GET_ALL_CATEGORIES_PAGINATED_RESPONSE_400_DESCRIPTION, content = @Content)
     })
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE + " or " +RolePermissionConstants.CLIENTE_ROLE + " or " + RolePermissionConstants.AUX_BODEGA_ROLE)
     @GetMapping
     public ResponseEntity<Pagination<CategoryResponse>> getAllCategoriesPaginated(
             @Parameter(description = CategoryRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = CategoryRestControllerConstants.PARAM_PAGE_EXAMPLE)
@@ -82,6 +86,18 @@ public class CategoryRestController {
                 )
         );
     }
+
+
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE + " or " +RolePermissionConstants.CLIENTE_ROLE + " or " + RolePermissionConstants.AUX_BODEGA_ROLE)
+    @GetMapping("/all")
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
+        List<Category> categories = categoryServicePort.getAllCategories();
+        List<CategoryResponse> categoryResponses = categoryResponseMapper.categoriesToCategoryResponses(categories);
+        return ResponseEntity.ok(categoryResponses);
+    }
+
+
+
     @Operation(summary = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_SUMMARY, description = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_DESCRIPTION)
     @ApiResponses(value = {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = CategoryRestControllerConstants.GET_CATEGORY_NAMES_BY_PRODUCT_ID_RESPONSE_200_DESCRIPTION),

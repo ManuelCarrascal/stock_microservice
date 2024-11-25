@@ -70,6 +70,16 @@ public class ProductAdapter implements IProductPersistencePort {
         productRepository.save(productEntity);
     }
 
+
+    @Override
+    public void reduceProductQuantity(Product product) {
+        ProductEntity productEntity = productRepository.findById(product.getProductId())
+                .orElseThrow(() -> new NotFoundException(ProductAdapterConstants.PRODUCT_NOT_FOUND_MESSAGE));
+        productEntity.setProductQuantity(productEntity.getProductQuantity() - product.getProductQuantity());
+
+        productRepository.save(productEntity);
+    }
+
     @Override
     public void getProductById(Long productId) {
         productEntityMapper.toProduct(productRepository.findById(productId)
@@ -86,20 +96,23 @@ public class ProductAdapter implements IProductPersistencePort {
         PageRequest pageRequest = PageRequest.of(
                 paginationUtil.getPageNumber(),
                 paginationUtil.getPageSize(),
-                paginationUtil.isAscending() ? Sort.by("productName").ascending() : Sort.by("productName").descending()
+                paginationUtil.isAscending() ? Sort.by(ProductAdapterConstants.PRODUCT_NAME).ascending() : Sort.by(ProductAdapterConstants.PRODUCT_NAME).descending()
         );
 
-        Page<ProductEntity> productPage;
-        categoryName = categoryName == null ? null : "%" + categoryName + "%";
-        brandName = brandName == null ? null : "%" + brandName + "%";
+        Page<ProductEntity> productPage = null;
+        categoryName = categoryName == null ? null : ProductAdapterConstants.WILDCARD + categoryName + ProductAdapterConstants.WILDCARD ;
+        brandName = brandName == null ? null : ProductAdapterConstants.WILDCARD + brandName +ProductAdapterConstants.WILDCARD ;
 
         if (categoryName != null && brandName != null) {
             productPage = productRepository.findByBrandNameAndCategoryNameAndIds(brandName, categoryName, productIds, pageRequest);
-        } else if (categoryName != null) {
+        }
+        if (categoryName != null && productPage == null) {
             productPage = productRepository.findByCategoryAndIds(categoryName, productIds, pageRequest);
-        } else if (brandName != null) {
+        }
+        if (brandName != null && productPage == null) {
             productPage = productRepository.findByBrandNameAndIds(brandName, productIds, pageRequest);
-        } else {
+        }
+        if (productPage == null) {
             productPage = productRepository.findByIds(productIds, pageRequest);
         }
 
@@ -112,6 +125,19 @@ public class ProductAdapter implements IProductPersistencePort {
                 products
         );
     }
+
+    @Override
+    public double getProductPriceById(Long productId) {
+        return productRepository.findById(productId)
+                .map(ProductEntity::getProductPrice)
+                .orElseThrow(() -> new NotFoundException(ProductAdapterConstants.PRODUCT_NOT_FOUND_MESSAGE));
+    }
+
+    @Override
+    public List<Product> getAllProducts(List<Long> productIds) {
+        return productEntityMapper.toProductList(productRepository.findAllById(productIds));
+    }
+
 
 
 }

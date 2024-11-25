@@ -51,4 +51,10 @@ public class BrandAdapter implements IBrandPersistencePort {
         Optional<BrandEntity> brandEntityOptional = brandRepository.findById(brandId);
         return brandEntityOptional.map(brandEntityMapper::toBrand).orElse(null);
     }
+
+    @Override
+    public List<Brand> getAllBrands() {
+        List<BrandEntity> brandEntities = brandRepository.getAllBrands();
+        return brandEntityMapper.toBrandList(brandEntities);
+    }
 }

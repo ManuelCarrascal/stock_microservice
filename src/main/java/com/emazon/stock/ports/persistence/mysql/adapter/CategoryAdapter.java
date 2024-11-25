@@ -44,6 +44,14 @@ public class CategoryAdapter implements ICategoryPersistencePort {
                 categories
         );
     }
+
+    @Override
+    public List<Category> getAllCategories() {
+        List<CategoryEntity> categoryEntities = categoryRepository.getAllCategories();
+        return categoryEntityMapper.toCategoryList(categoryEntities);
+
+    }
+
     @Override
     public List<Category> getAllByProduct(Long idProduct) {
         List<CategoryEntity> categories = categoryRepository.findCategoriesByProductId(idProduct);

@@ -23,7 +23,7 @@ public class CategoryRestControllerConstants {
     public static final String PARAM_CATEGORY_REQUEST_BODY_DESCRIPTION = "Category request body";
 
     public static final String DEFAULT_PAGE = "0";
-    public static final String DEFAULT_SIZE = "1";
+    public static final String DEFAULT_SIZE = "2";
     public static final String DEFAULT_SORT_BY = "categoryName";
     public static final String DEFAULT_SORT_ORDER = "true";
 

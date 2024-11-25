@@ -34,16 +34,31 @@ public interface IProductRepository extends JpaRepository<ProductEntity,Long> {
     @Query(QueriesConstants.FIND_STOCK_QUANTITY_PRODUCT)
     Long findStockQuantityProduct(Long productId);
 
-    @Query ("SELECT p FROM ProductEntity p WHERE p.productId IN :ids ")
+    @Query (QueriesConstants.FIND_BY_IDS)
     Page<ProductEntity> findByIds(List<Long> ids, Pageable pageable);
 
-    @Query( "SELECT p FROM ProductEntity  p WHERE p.brand.brandName LIKE :brandName AND p.productId IN :ids")
-    Page<ProductEntity> findByBrandNameAndIds(@Param("brandName") String brandName, @Param("ids") List<Long> ids, Pageable pageable);
+    @Query(QueriesConstants.FIND_BY_BRAND_NAME_AND_IDS )
+    Page<ProductEntity> findByBrandNameAndIds(
+            @Param(QueriesConstants.PARAM_BRAND_NAME) String brandName,
+            @Param(QueriesConstants.PARAM_IDS) List<Long> ids,
+            Pageable pageable
+    );
 
-    @Query("SELECT p FROM ProductEntity p JOIN p.categories c WHERE c.categoryName LIKE :categoryName AND p.productId IN :ids")
-    Page<ProductEntity> findByCategoryAndIds(@Param("categoryName") String categoryName, @Param("ids") List<Long> ids, Pageable pageable);
+    @Query(QueriesConstants.FIND_BY_CATEGORY_NAME_AND_IDS)
+    Page<ProductEntity> findByCategoryAndIds(
+            @Param(QueriesConstants.PARAM_CATEGORY_NAME) String categoryName,
+            @Param(QueriesConstants.PARAM_IDS) List<Long> ids,
+            Pageable pageable
+    );
 
-    @Query("SELECT p FROM ProductEntity p JOIN p.brand b JOIN p.categories c WHERE b.brandName LIKE :brandName AND c.categoryName LIKE :categoryName AND p.productId IN :ids")
-    Page<ProductEntity> findByBrandNameAndCategoryNameAndIds(@Param("brandName") String brandName, @Param("categoryName") String categoryName, @Param("ids") List<Long> ids, Pageable pageable);
+    @Query(QueriesConstants.FIND_BY_BRAND_NAME_AND_CATEGORY_NAME_AND_IDS)
+    Page<ProductEntity> findByBrandNameAndCategoryNameAndIds(
+            @Param(QueriesConstants.PARAM_BRAND_NAME) String brandName,
+            @Param(QueriesConstants.PARAM_CATEGORY_NAME) String categoryName,
+            @Param(QueriesConstants.PARAM_IDS) List<Long> ids, Pageable pageable
+    );
 
+
+    @Query("SELECT p FROM ProductEntity p WHERE p.productId IN :ids")
+    List<ProductEntity> findAllProductsByProductIds(@Param("ids") List<Long> ids);
 }

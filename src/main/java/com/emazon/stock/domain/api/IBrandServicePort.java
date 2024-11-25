@@ -4,8 +4,12 @@ import com.emazon.stock.domain.model.Brand;
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.util.PaginationUtil;
 
+import java.util.List;
+
 public interface IBrandServicePort {
     void saveBrand(Brand brand);
     Pagination<Brand> getAllBrandsPaginated(PaginationUtil paginationUtil);
     Brand brandGetById(Long brandId);
+
+    List<Brand> getAllBrands();
 }
