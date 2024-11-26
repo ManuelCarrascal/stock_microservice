@@ -32,6 +32,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
              return;
          }
         String jwt = authHeader.substring(JwtTokenFilterConstants.TOKEN_PREFIX_LENGTH);
+
         UserDetails user = myUserDetailsService.loadUserByUsername(jwt);
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, jwt, user.getAuthorities());

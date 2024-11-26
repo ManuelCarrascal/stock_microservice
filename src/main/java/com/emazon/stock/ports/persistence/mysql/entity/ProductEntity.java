@@ -26,7 +26,7 @@ public class ProductEntity {
     private Integer productQuantity;
     @Column(name = ProductEntityConstants.COLUMN_PRODUCT_PRICE, nullable = false)
     private Double productPrice;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = ProductEntityConstants.JOIN_COLUMN_BRAND_ID)
     private BrandEntity brand;
     @ManyToMany(fetch = FetchType.LAZY)

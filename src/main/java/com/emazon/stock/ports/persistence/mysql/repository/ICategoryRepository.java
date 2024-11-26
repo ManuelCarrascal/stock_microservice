@@ -17,4 +17,7 @@ public interface ICategoryRepository extends JpaRepository<CategoryEntity,Long> 
 
     @Query(QueriesConstants.FIND_CATEGORY_NAMES_BY_PRODUCT_ID)
     List<String> findCategoryNamesByProductId(Long productId);
+
+    @Query("SELECT c FROM CategoryEntity c")
+    List<CategoryEntity> getAllCategories();
 }

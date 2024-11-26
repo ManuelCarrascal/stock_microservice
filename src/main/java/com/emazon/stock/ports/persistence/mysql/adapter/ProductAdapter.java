@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -69,6 +70,16 @@ public class ProductAdapter implements IProductPersistencePort {
         productRepository.save(productEntity);
     }
 
+
+    @Override
+    public void reduceProductQuantity(Product product) {
+        ProductEntity productEntity = productRepository.findById(product.getProductId())
+                .orElseThrow(() -> new NotFoundException(ProductAdapterConstants.PRODUCT_NOT_FOUND_MESSAGE));
+        productEntity.setProductQuantity(productEntity.getProductQuantity() - product.getProductQuantity());
+
+        productRepository.save(productEntity);
+    }
+
     @Override
     public void getProductById(Long productId) {
         productEntityMapper.toProduct(productRepository.findById(productId)
@@ -81,24 +92,31 @@ public class ProductAdapter implements IProductPersistencePort {
     }
 
     @Override
-    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds) {
-        PageRequest pageRequest = PageRequest.of(paginationUtil.getPageNumber(), paginationUtil.getPageSize());
-        Page<ProductEntity> productPage = productRepository.findByIdIn(productIds, pageRequest);
-        if (SortBy.BRAND_NAME.getFieldName().equals(paginationUtil.getSortBy())) {
-            productPage = paginationUtil.isAscending()
-                    ? productRepository.findByIdInOrderByBrandNameAsc(productIds, pageRequest)
-                    : productRepository.findByIdInOrderByBrandNameDesc(productIds, pageRequest);
-        } else if (SortBy.NUMBER_OF_CATEGORIES.getFieldName().equals(paginationUtil.getSortBy())) {
-            productPage = paginationUtil.isAscending()
-                    ? productRepository.findByIdInOrderByNumberOfCategoriesAsc(productIds, pageRequest)
-                    : productRepository.findByIdInOrderByNumberOfCategoriesDesc(productIds, pageRequest);
-        } else if (SortBy.PRODUCT_NAME.getFieldName().equals(paginationUtil.getSortBy())) {
-            productPage = paginationUtil.isAscending()
-                    ? productRepository.findByIdInOrderByProductNameAsc(productIds, pageRequest)
-                    : productRepository.findByIdInOrderByProductNameDesc(productIds, pageRequest);
-        }
-        List<Product> products = productEntityMapper.toProductList(productPage.getContent());
+    public Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds, String categoryName, String brandName) {
+        PageRequest pageRequest = PageRequest.of(
+                paginationUtil.getPageNumber(),
+                paginationUtil.getPageSize(),
+                paginationUtil.isAscending() ? Sort.by(ProductAdapterConstants.PRODUCT_NAME).ascending() : Sort.by(ProductAdapterConstants.PRODUCT_NAME).descending()
+        );
 
+        Page<ProductEntity> productPage = null;
+        categoryName = categoryName == null ? null : ProductAdapterConstants.WILDCARD + categoryName + ProductAdapterConstants.WILDCARD ;
+        brandName = brandName == null ? null : ProductAdapterConstants.WILDCARD + brandName +ProductAdapterConstants.WILDCARD ;
+
+        if (categoryName != null && brandName != null) {
+            productPage = productRepository.findByBrandNameAndCategoryNameAndIds(brandName, categoryName, productIds, pageRequest);
+        }
+        if (categoryName != null && productPage == null) {
+            productPage = productRepository.findByCategoryAndIds(categoryName, productIds, pageRequest);
+        }
+        if (brandName != null && productPage == null) {
+            productPage = productRepository.findByBrandNameAndIds(brandName, productIds, pageRequest);
+        }
+        if (productPage == null) {
+            productPage = productRepository.findByIds(productIds, pageRequest);
+        }
+
+        List<Product> products = productEntityMapper.toProductList(productPage.getContent());
         return new Pagination<>(
                 paginationUtil.isAscending(),
                 paginationUtil.getPageNumber(),
@@ -107,4 +125,19 @@ public class ProductAdapter implements IProductPersistencePort {
                 products
         );
     }
+
+    @Override
+    public double getProductPriceById(Long productId) {
+        return productRepository.findById(productId)
+                .map(ProductEntity::getProductPrice)
+                .orElseThrow(() -> new NotFoundException(ProductAdapterConstants.PRODUCT_NOT_FOUND_MESSAGE));
+    }
+
+    @Override
+    public List<Product> getAllProducts(List<Long> productIds) {
+        return productEntityMapper.toProductList(productRepository.findAllById(productIds));
+    }
+
+
+
 }

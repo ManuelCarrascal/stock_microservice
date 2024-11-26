@@ -12,7 +12,4 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductCartRequest {
     private List<Long> productIds;
-    private String categoryName;
-    private String brandName;
-
 }

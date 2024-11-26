@@ -2,23 +2,39 @@ package com.emazon.stock.domain.api.usecase;
 
 import com.emazon.stock.domain.model.Pagination;
 import com.emazon.stock.domain.util.PaginationUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Test;
 import com.emazon.stock.domain.spi.category.ICategoryPersistencePort;
 import com.emazon.stock.domain.model.Category;
 import com.emazon.stock.domain.exception.EntityAlreadyExistsException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
 class CategoryUseCaseTest {
+    @InjectMocks
+    private CategoryUseCase categoryUseCase; // Clase en la que está el método a probar
+
+    @Mock
+    private ICategoryPersistencePort categoryPersistencePort; // Mock del puerto de persistencia
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     private final ICategoryPersistencePort categoryPersistencePortMock = mock(ICategoryPersistencePort.class);
 
@@ -72,6 +88,19 @@ class CategoryUseCaseTest {
 
         assertThat(result, equalTo(categoryList));
         verify(categoryPersistencePortMock).getAllByProduct(0L);
+    }
+
+    @Test
+    void testGetCategoryNamesByProductId() {
+        Long productId = 1L;
+        List<String> expectedCategoryNames = Arrays.asList("Category1", "Category2");
+
+        when(categoryPersistencePort.findCategoryNamesByProductId(productId)).thenReturn(expectedCategoryNames);
+
+        List<String> actualCategoryNames = categoryUseCase.getCategoryNamesByProductId(productId);
+
+        assertEquals(expectedCategoryNames, actualCategoryNames);
+        verify(categoryPersistencePort, times(1)).findCategoryNamesByProductId(productId);
     }
 }
 

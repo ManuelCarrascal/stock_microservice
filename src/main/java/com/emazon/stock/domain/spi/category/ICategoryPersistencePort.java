@@ -8,8 +8,13 @@ import java.util.List;
 
 public interface ICategoryPersistencePort {
     void saveCategory(Category category);
+
     boolean categoryExistsByName(String categoryName);
+
     Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil);
+
+    List<Category> getAllCategories();
+
     List<Category> getAllByProduct(Long idProduct);
 
     List<String> findCategoryNamesByProductId(Long productId);

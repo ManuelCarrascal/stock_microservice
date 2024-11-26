@@ -9,7 +9,10 @@ import java.util.List;
 public interface ICategoryServicePort {
     void saveCategory(Category category);
     Pagination<Category> getAllCategoriesPaginated(PaginationUtil paginationUtil);
+
     List<Category> getAllByProduct(Long idProduct);
 
     List<String> getCategoryNamesByProductId(Long productId);
+
+    List<Category> getAllCategories();
 }

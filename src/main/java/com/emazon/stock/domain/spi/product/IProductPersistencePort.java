@@ -16,6 +16,12 @@ public interface IProductPersistencePort {
 
     boolean isStockSufficient(Long productId, Integer quantity);
 
-    Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds);
+    Pagination<Product> getAllProductsPaginatedByIds(PaginationUtil paginationUtil, List<Long> productIds, String categoryName, String brandName);
+
+    double getProductPriceById(Long productId);
+
+    List<Product> getAllProducts(List<Long> productIds);
+
+    void reduceProductQuantity(Product product);
 
 }

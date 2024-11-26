@@ -43,4 +43,9 @@ public class CategoryUseCase implements ICategoryServicePort {
 
     }
 
+    @Override
+    public List<Category> getAllCategories() {
+        return categoryPersistencePort.getAllCategories();
+    }
+
 }

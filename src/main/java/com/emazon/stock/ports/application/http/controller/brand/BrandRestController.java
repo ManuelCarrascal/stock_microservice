@@ -29,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/brands")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "${cors.allowed.origins}")
 @Tag(name = BrandRestControllerConstants.TAG_NAME, description = BrandRestControllerConstants.TAG_DESCRIPTION)
 public class BrandRestController {
     private final IBrandServicePort brandServicePort;
@@ -56,6 +57,7 @@ public class BrandRestController {
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_200, description = BrandRestControllerConstants.GET_ALL_BRANDS_PAGINATED_RESPONSE_200_DESCRIPTION),
             @ApiResponse(responseCode = ResponseCodeConstants.RESPONSE_CODE_400, description = BrandRestControllerConstants.GET_ALL_BRANDS_PAGINATED_RESPONSE_400_DESCRIPTION, content = @Content)
     })
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE + " or " +RolePermissionConstants.CLIENTE_ROLE + " or " + RolePermissionConstants.AUX_BODEGA_ROLE)
     @GetMapping
     public ResponseEntity<Pagination<BrandResponse>> getAllBrandsPaginated(
             @Parameter(description = BrandRestControllerConstants.PARAM_PAGE_DESCRIPTION, example = BrandRestControllerConstants.PARAM_PAGE_EXAMPLE)
@@ -79,5 +81,12 @@ public class BrandRestController {
                         brandResponseMapper.brandsToBrandResponses(brands)
                 )
         );
+    }
+
+    @PreAuthorize(RolePermissionConstants.ADMIN_ROLE + " or " +RolePermissionConstants.CLIENTE_ROLE + " or " + RolePermissionConstants.AUX_BODEGA_ROLE)
+    @GetMapping("/all")
+    public ResponseEntity<List<BrandResponse>> getAllBrands() {
+        List<Brand> brands = brandServicePort.getAllBrands();
+        return ResponseEntity.ok(brandResponseMapper.brandsToBrandResponses(brands));
     }
 }
